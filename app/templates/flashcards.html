@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="page-container">
+    <div class="action-menu">
+    <a href="{{ url_for('add_flashcard') }}" class="btn btn-secondary mb-2">Add New Flashcard</a>
+    <a href="{{ url_for('browse_flashcards') }}" class="btn btn-secondary mb-2">Browse Cards</a>
+</div>
+
+    <div class="card-wrapper">
+        {% if flashcard %}
+        <div class="card-content">
+            <div class="front-text">{{ flashcard.front }}</div>
+            {% if show_answer %}
+            <hr>
+            <div class="back-text">
+                <div>{{ flashcard.reading }}</div>
+                <div>{{ flashcard.meaning }}</div>
+                <div>{{ flashcard.sentence }}</div>
+            </div>
+            {% else %}
+            <form method="post">
+                <button type="submit" name="action" value="show" class="btn btn-secondary mt-3">Show Answer</button>
+            </form>
+            {% endif %}
+
+            {% if show_answer %}
+            <form method="post" class="mt-3">
+                <button type="submit" name="rating" value="again" class="btn btn-danger">Again</button>
+                <button type="submit" name="rating" value="good" class="btn btn-success">Good</button>
+            </form>
+            {% endif %}
+
+            <div class="queue-count mt-3">Cards left: {{ total_due }}</div>
+        </div>
+        {% else %}
+        <div class="card-content">
+            <p>No cards due right now — great job!</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+/* Overall layout */
+.page-container {
+    display: flex;
+    justify-content: center; /* center only card-wrapper */
+    margin-top: 30px;
+    position: relative;
+}
+
+/* Fixed left sidebar */
+.action-menu {
+    position: fixed;
+    left: 20px;
+    top: 100px; /* lower from top navbar */
+    display: flex;
+    flex-direction: column;
+}
+
+/* Centered card wrapper */
+.card-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 70vh;
+    width: 100%;
+}
+
+/* Card styles */
+.card-content {
+    background-color: #2c2c2c;
+    padding: 30px;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 500px;
+    text-align: center;
+    color: white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.front-text {
+    font-size: 36px;
+    margin-bottom: 15px;
+    font-weight: bold;
+}
+
+.back-text div {
+    font-size: 24px;
+    margin: 8px 0;
+}
+
+hr {
+    border: 0;
+    height: 1px;
+    background-color: white;
+    margin: 15px 0;
+}
+
+.btn {
+    margin: 5px 0;
+}
+
+.queue-count {
+    font-size: 16px;
+    margin-top: 15px;
+}
+</style>
+{% endblock %}

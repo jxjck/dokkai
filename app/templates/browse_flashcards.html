@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Your Flashcards</h2>
+    <table class="table table-dark table-striped mt-3">
+        <thead>
+            <tr>
+                <th>Word</th>
+                <th>Reading</th>
+                <th>Meaning</th>
+                <th>Sentence</th>
+                <th>Due Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for card in flashcards %}
+            <tr>
+                <td>{{ card.front }}</td>
+                <td>{{ card.reading }}</td>
+                <td>{{ card.meaning }}</td>
+                <td>{{ card.sentence }}</td>
+                <td>{{ card.due_date.strftime('%Y-%m-%d') if card.due_date else 'N/A' }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Add New Flashcard</h2>
+    <form method="POST">
+        {{ form.hidden_tag() }}
+
+        <div class="form-group">
+            {{ form.front.label(class="form-label") }}
+            {{ form.front(class="form-control") }}
+        </div>
+
+        <div class="form-group">
+            {{ form.reading.label(class="form-label") }}
+            {{ form.reading(class="form-control") }}
+        </div>
+
+        <div class="form-group">
+            {{ form.meaning.label(class="form-label") }}
+            {{ form.meaning(class="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ form.sentence.label(class="form-label") }}
+            {{ form.sentence(class="form-control") }}
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-3">Add Flashcard</button>
+    </form>
+</div>
+{% endblock %}

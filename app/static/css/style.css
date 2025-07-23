@@ -1,0 +1,94 @@
+/* General */
+body {
+    background: linear-gradient(to bottom right, #f8f9fa, #e9f5f2);
+    font-family: 'Poppins', sans-serif;
+}
+
+h1, h2, h3, h4 {
+    font-weight: 600;
+}
+
+/* Navbar */
+.navbar {
+    background: linear-gradient(to right, #264653, #2a9d8f);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.navbar-brand {
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.nav-link {
+    color: #f1faee !important;
+    position: relative;
+}
+
+.nav-link::after {
+    content: '';
+    display: block;
+    width: 0;
+    height: 2px;
+    background: #a8dadc;
+    transition: width .3s;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+}
+
+.nav-link:hover::after {
+    width: 100%;
+}
+
+.nav-link:hover {
+    color: #a8dadc !important;
+}
+
+/* Cards */
+.card {
+    border-radius: 15px;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.card-header {
+    background-color: #2a9d8f;
+    color: #fff;
+    font-weight: bold;
+}
+
+/* Buttons */
+.btn-success {
+    background-color: #2a9d8f;
+    border: none;
+    border-radius: 25px;
+}
+
+.btn-success:hover {
+    background-color: #21867a;
+}
+
+.btn-outline-success {
+    color: #2a9d8f;
+    border-color: #2a9d8f;
+    border-radius: 25px;
+}
+
+.btn-outline-success:hover {
+    background-color: #2a9d8f;
+    color: #fff;
+}
+
+/* Footer (if added later) */
+footer {
+    margin-top: 40px;
+    padding: 20px 0;
+    background-color: #264653;
+    color: #f1faee;
+    text-align: center;
+    font-size: 0.9rem;
+}

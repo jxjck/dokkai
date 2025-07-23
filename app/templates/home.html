@@ -1,6 +1,47 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <h1>Welcome to Dokkai!</h1>
+<div class="container mt-5">
+
+    <div class="text-center mb-4">
+        <h1>Welcome to Dokkai</h1>
+        <p>An optimised, fun approach to language learning</p>
+    </div>
+
+    <!-- two col layout -->
+    <div class="row">
+        <!-- left one -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    Learn by Topic
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">📘 Grammar</li>
+                    <li class="list-group-item">あ Hiragana</li>
+                    <li class="list-group-item">カ Katakana</li>
+                    <li class="list-group-item">🉐 Vocabulary</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- right col (join stuff)-->
+        <div class="col-md-6">
+            <div class="card bg-light">
+                <div class="card-header">
+                    Join Dokkai to Save Your Progress
+                </div>
+                <div class="card-body">
+                    <p class="card-text">
+                        Create a free account to track learning, unlock features, and review flashcards.
+                    </p>
+                    <!-- login register buttons -->
+                    <a href="{{ url_for('register') }}" class="btn btn-success">Register Free</a>
+                    <a href="{{ url_for('login') }}" class="btn btn-outline-success">Login</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
 
