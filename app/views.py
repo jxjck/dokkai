@@ -9,32 +9,22 @@ from datetime import datetime, timedelta, timezone
 from fsrs import Scheduler, Card, Rating
 
 
+# blueprint
 flashcards_bp = Blueprint('flashcards', __name__)
 
-##edit test
-##edit test
-##edit test
-##edit test
-##edit test
-
-#push test 2
-#push test 3
-
-#testing push 4
-
-
+# fsrs sched
 scheduler = Scheduler()
 
 @app.route('/flashcards', methods=['GET', 'POST'])
 @login_required
 def flashcards():
-
+    # get next
     flashcard = Flashcard.query.filter(
         Flashcard.user_id == current_user.id,
         Flashcard.due_date <= datetime.now(timezone.utc)
     ).order_by(Flashcard.due_date).first()
 
-
+    # total due
     total_due = Flashcard.query.filter(
         Flashcard.user_id == current_user.id,
         Flashcard.due_date <= datetime.now(timezone.utc)
@@ -45,9 +35,12 @@ def flashcards():
         return render_template('flashcards.html', flashcard=None, total_due=0, show_answer=False)
 
     if request.method == 'POST':
+        # show answer
+
         if request.form.get('action') == 'show':
             return render_template('flashcards.html', flashcard=flashcard, total_due=total_due, show_answer=True)
 
+        # rating
         rating_str = request.form.get('rating')
         rating_map = {
             'again': Rating.Again,
@@ -59,17 +52,19 @@ def flashcards():
             flash('Invalid rating.', 'danger')
             return redirect(url_for('flashcards'))
 
-        #build fsrs card, check here
+        # build fsrs card
         fsrs_card = Card()
 
+        # update card
         updated_card, review_log = scheduler.review_card(fsrs_card, rating)
+
+        # card in db
         flashcard.due_date = updated_card.due
         flashcard.last_review = datetime.now(timezone.utc)
         db.session.commit()
 
         flash(f"Card updated! Next due: {flashcard.due_date}", 'success')
         return redirect(url_for('flashcards'))
-
 
     return render_template('flashcards.html', flashcard=flashcard, total_due=total_due, show_answer=False)
 

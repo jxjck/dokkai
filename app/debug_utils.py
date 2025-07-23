@@ -1,9 +1,12 @@
 from datetime import datetime
+
+
 from app import db
 from app.models import User, Flashcard
 
+
 def reset_db():
-    print("resetting...:) ちょっと待ってね：）")
+    print("resetting...ちょっと待ってね:)")
 
     db.drop_all()
     db.create_all()
@@ -21,7 +24,7 @@ def reset_db():
         Flashcard(
             user_id=user2.id,
             front="ありがとう",
-            back="Thank you",
+            back="Thank you",  # set same as meaning
             reading="ありがとう",
             meaning="Thank you",
             sentence="手伝ってくれてありがとう。",
