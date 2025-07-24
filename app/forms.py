@@ -1,8 +1,25 @@
 from flask_wtf import FlaskForm
+from flask_wtf.file import FileAllowed
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, TextAreaField
+from wtforms.fields.simple import FileField
 from wtforms.validators import DataRequired, Email, EqualTo, ValidationError, Length
 from app import db
 from app.models import User
+
+
+
+
+class EditProfileForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired(), Length(min=2, max=20)])
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    password = PasswordField('New Password', validators=[Length(min=6)])
+    confirm_password = PasswordField('Confirm Password', validators=[EqualTo('password')])
+    profile_picture = FileField('Profile Picture', validators=[
+        FileAllowed(['jpg', 'jpeg', 'png'], 'Images only!')
+    ])
+    submit = SubmitField('Update Profile')
+
+
 
 class LoginForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])

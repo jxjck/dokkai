@@ -8,6 +8,9 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from app import db, login
 from dataclasses import dataclass
 from datetime import datetime
+import os
+
+
 
 @login.user_loader
 def load_user(id):
@@ -25,6 +28,13 @@ class User(UserMixin, db.Model):
     last_login_at = db.Column(db.DateTime, default=None)
 
     flashcards = db.relationship('Flashcard', backref='user', lazy='dynamic')
+
+
+    # wk4 store filename for user's profile picture
+    profile_picture = db.Column(db.String(255), nullable=True)
+
+
+
 
     def set_password(self, password):
         from werkzeug.security import generate_password_hash

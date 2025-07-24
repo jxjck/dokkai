@@ -1,9 +1,6 @@
 from datetime import datetime
-
-
 from app import db
 from app.models import User, Flashcard
-
 
 def reset_db():
     print("resetting...ちょっと待ってね:)")
@@ -11,10 +8,19 @@ def reset_db():
     db.drop_all()
     db.create_all()
 
-    user1 = User(username="testuser", email="test@example.com")
+    user1 = User(
+        username="testuser",
+        email="test@example.com",
+        profile_picture="default_avatar.png"  # dummy avatar
+    )
     user1.set_password("testpass")
 
-    user2 = User(username="user2", email="user2@user2.com", role="Admin")
+    user2 = User(
+        username="user2",
+        email="user2@user2.com",
+        role="Admin",
+        profile_picture="default_avatar.png"  # dummy avatar
+    )
     user2.set_password("User2@user2.com")
 
     db.session.add_all([user1, user2])
@@ -24,7 +30,7 @@ def reset_db():
         Flashcard(
             user_id=user2.id,
             front="ありがとう",
-            back="Thank you",  # set same as meaning
+            back="Thank you",
             reading="ありがとう",
             meaning="Thank you",
             sentence="手伝ってくれてありがとう。",

@@ -1,25 +1,55 @@
 {% extends "base.html" %}
-
 {% block content %}
-  <h1>Welcome, {{ user.username }}!</h1>
+<div class="container mt-5">
+    <h2 class="mb-4">おかえりなさい, {{ user.username }}!</h2>
+    <p>This is the profile dashboard</p>
 
-  <div class="card mt-4">
-    <div class="card-body">
-      <h5 class="card-title">Your Profile</h5>
-      <ul class="list-group list-group-flush">
-        <li class="list-group-item"><strong>Email:</strong> {{ user.email }}</li>
+    <div class="row">
+        <!-- profile image + upload form -->
 
-        <li class="list-group-item"><strong>Registered:</strong> {{ user.created_at.strftime('%Y-%m-%d') }}</li>
-        <li class="list-group-item">
-          <strong>Last login:</strong>
-          {% if user.last_login_at %}
-            {{ user.last_login_at.strftime('%Y-%m-%d %H:%M') }}
-          {% else %}
-            Never
-          {% endif %}
-        </li>
-      </ul>
+
+        <div class="col-md-5">
+            <div class="card mb-4">
+                <div class="card-body text-center">
+                    {% if user.profile_picture %}
+                        <img src="{{ url_for('uploaded_file', filename=user.profile_picture) }}" alt="Profile Picture" width="150" height="150" class="rounded-circle mb-3">
+                    {% else %}
+                        <div class="border rounded-circle d-flex align-items-center justify-content-center mb-3" style="width:150px; height:150px; background-color:#f0f0f0;">
+                            <span class="text-muted">No profile picture yet.</span>
+                        </div>
+                    {% endif %}
+                    <form method="POST" action="{{ url_for('upload_profile_image') }}" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <input type="file" name="profile_image" class="form-control">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Upload New</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- account info + stats -->
+        <div class="col-md-7">
+            <div class="card">
+                <div class="card-header bg-teal text-white"><strong>Account Info</strong></div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item"><strong>Email:</strong> {{ user.email }}</li>
+                    <li class="list-group-item"><strong>Registered:</strong> {{ user.created_at.strftime('%Y-%m-%d') }}</li>
+                    <li class="list-group-item"><strong>Last Login:</strong>
+                        {% if user.last_login_at %}
+                            {{ user.last_login_at.strftime('%Y-%m-%d %H:%M') }}
+                        {% else %}
+                            Not available
+                        {% endif %}
+                    </li>
+                    <li class="list-group-item"><strong>Flashcards:</strong> {{ flashcard_count }}</li>
+                    <li class="list-group-item"><strong>Days Active:</strong> {{ days_active }} days</li>
+                    <li class="list-group-item text-center">
+                        <a href="{{ url_for('export_flashcards') }}" class="btn btn-outline-primary mt-2">Download Flashcards (CSV)</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
     </div>
-  </div>
+</div>
 {% endblock %}
-
