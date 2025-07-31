@@ -4,11 +4,11 @@
     <meta charset="utf-8">
     <title>{% block title %}Dokkai{% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- boot css -->
+
+    <!-- bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
-
-    <!-- other css -->
+    <!-- your custom styles -->
     <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
   </head>
   <body>
@@ -16,35 +16,29 @@
     <!-- navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark mb-4">
       <div class="container-fluid">
-        <!-- left side -->
+        <!-- brand -->
         <a class="navbar-brand" href="{{ url_for('home') }}">Dokkai</a>
 
-        <!-- small screen toggle -->
+        <!-- mobile menu toggle -->
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
                 aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
 
-        <!-- center/right nav -->
+        <!-- main nav -->
         <div class="collapse navbar-collapse" id="navbarContent">
           <div class="d-flex flex-grow-1 justify-content-between align-items-center">
             {% if current_user.is_authenticated %}
-
               <ul class="navbar-nav mx-auto">
-
                 <li class="nav-item"><a class="nav-link" href="{{ url_for('flashcards') }}">Flashcards</a></li>
-
-
-                <li class="nav-item"><a class="nav-link" href="#">Grammar</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Leaderboard</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('grammar') }}">Grammar</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('leaderboard') }}">Leaderboard</a></li>
               </ul>
-              <!-- profile + logout -->
               <ul class="navbar-nav">
                 <li class="nav-item"><a class="nav-link" href="{{ url_for('dashboard') }}">Profile</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ url_for('logout') }}">Logout</a></li>
               </ul>
             {% else %}
-
               <ul class="navbar-nav ms-auto">
                 <li class="nav-item"><a class="nav-link" href="{{ url_for('login') }}">Login</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ url_for('register') }}">Register</a></li>
@@ -55,9 +49,8 @@
       </div>
     </nav>
 
-    <!-- main content bit -->
+    <!-- flash messages -->
     <div class="container">
-      <!-- flash msg-->
       {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
           {% for category, message in messages %}
@@ -69,11 +62,29 @@
         {% endif %}
       {% endwith %}
 
-
       {% block content %}{% endblock %}
     </div>
 
-    <!-- boot js -->
+    <!-- bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- dark mode script -->
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const dark = localStorage.getItem("darkMode");
+        if (dark === "true") {
+          document.body.classList.add("dark-mode");
+        }
+
+        const toggle = document.getElementById("darkModeToggle");
+        if (toggle) {
+          toggle.checked = dark === "true";
+          toggle.addEventListener("change", function () {
+            document.body.classList.toggle("dark-mode", this.checked);
+            localStorage.setItem("darkMode", this.checked);
+          });
+        }
+      });
+    </script>
   </body>
 </html>

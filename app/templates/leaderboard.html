@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Leaderboard | Dokkai{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">🏆 Leaderboard</h2>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th scope="col">Rank</th>
+                    <th scope="col">User</th>
+                    <th scope="col">Flashcards</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user, count, rank in leaderboard %}
+                <tr>
+                    <th scope="row">#{{ rank }}</th>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <img src="{{ url_for('uploaded_file', filename=user.profile_picture) }}"
+                                 class="rounded-circle me-2" width="50" height="50" alt="Profile">
+                            <span>{{ user.username }}</span>
+                        </div>
+                    </td>
+                    <td>{{ count }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

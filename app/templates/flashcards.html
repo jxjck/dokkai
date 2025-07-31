@@ -2,22 +2,37 @@
 
 {% block content %}
 <div class="page-container">
-    <!-- Left fixed sidebar -->
+    <!-- left fixed sidebar -->
     <div class="action-menu">
-    <a href="{{ url_for('add_flashcard') }}" class="btn btn-secondary mb-2">Add New Flashcard</a>
-    <a href="{{ url_for('browse_flashcards') }}" class="btn btn-secondary mb-2">Browse Cards</a>
-</div>
+        <a href="{{ url_for('add_flashcard') }}" class="btn btn-secondary mb-2">Add New Flashcard</a>
+        <a href="{{ url_for('browse_flashcards') }}" class="btn btn-secondary mb-2">Browse Cards</a>
+
+        <!-- tts toggles -->
+        <div class="form-check form-switch mt-3">
+            <input class="form-check-input" type="checkbox" id="ttsWordToggle" checked>
+            <label class="form-check-label" for="ttsWordToggle">Word TTS</label>
+        </div>
+        <div class="form-check form-switch mt-2">
+            <input class="form-check-input" type="checkbox" id="ttsSentenceToggle" checked>
+            <label class="form-check-label" for="ttsSentenceToggle">Sentence TTS</label>
+        </div>
+    </div>
 
     <div class="card-wrapper">
         {% if flashcard %}
         <div class="card-content">
-            <div class="front-text">{{ flashcard.front }}</div>
+            <!-- front of card -->
+            <div id="frontText" class="front-text">{{ flashcard.front | safe }}</div>
+
             {% if show_answer %}
             <hr>
             <div class="back-text">
                 <div>{{ flashcard.reading }}</div>
                 <div>{{ flashcard.meaning }}</div>
-                <div>{{ flashcard.sentence }}</div>
+
+                {% if not flashcard.is_grammar and flashcard.sentence %}
+                <div id="sentenceText">{{ flashcard.sentence | striptags }}</div>
+                {% endif %}
             </div>
             {% else %}
             <form method="post">
@@ -43,24 +58,21 @@
 </div>
 
 <style>
-/* Overall layout */
 .page-container {
     display: flex;
-    justify-content: center; /* center only card-wrapper */
+    justify-content: center;
     margin-top: 30px;
     position: relative;
 }
 
-/* Fixed left sidebar */
 .action-menu {
     position: fixed;
     left: 20px;
-    top: 100px; /* lower from top navbar */
+    top: 100px;
     display: flex;
     flex-direction: column;
 }
 
-/* Centered card wrapper */
 .card-wrapper {
     display: flex;
     justify-content: center;
@@ -69,7 +81,6 @@
     width: 100%;
 }
 
-/* Card styles */
 .card-content {
     background-color: #2c2c2c;
     padding: 30px;
@@ -108,4 +119,52 @@ hr {
     margin-top: 15px;
 }
 </style>
+
+<script>
+  function speakText(text) {
+    if (!window.speechSynthesis) return;
+
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = "ja-JP";
+    utterance.rate = 0.9;
+
+    const voices = window.speechSynthesis.getVoices();
+    const japaneseVoice = voices.find(voice => voice.lang === "ja-JP");
+    if (japaneseVoice) {
+      utterance.voice = japaneseVoice;
+    }
+
+    window.speechSynthesis.speak(utterance);
+  }
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const wordToggle = document.getElementById("ttsWordToggle");
+    const sentenceToggle = document.getElementById("ttsSentenceToggle");
+    const frontText = document.getElementById("frontText");
+    const sentenceText = document.getElementById("sentenceText");
+
+    // restore toggle states
+    wordToggle.checked = localStorage.getItem("ttsWordEnabled") !== "false";
+    sentenceToggle.checked = localStorage.getItem("ttsSentenceEnabled") !== "false";
+
+    wordToggle.addEventListener("change", () => {
+      localStorage.setItem("ttsWordEnabled", wordToggle.checked);
+    });
+
+    sentenceToggle.addEventListener("change", () => {
+      localStorage.setItem("ttsSentenceEnabled", sentenceToggle.checked);
+    });
+
+    const isAnswerRevealed = {{ 'true' if show_answer else 'false' }};
+
+    if (isAnswerRevealed) {
+      if (wordToggle.checked && frontText) {
+        setTimeout(() => speakText(frontText.innerText), 200);
+      }
+      if (sentenceToggle.checked && sentenceText) {
+        setTimeout(() => speakText(sentenceText.innerText), 600); // delay slightly after word
+      }
+    }
+  });
+</script>
 {% endblock %}

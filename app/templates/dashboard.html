@@ -1,55 +1,109 @@
 {% extends "base.html" %}
+
 {% block content %}
-<div class="container mt-5">
-    <h2 class="mb-4">おかえりなさい, {{ user.username }}!</h2>
-    <p>This is the profile dashboard</p>
+<div class="container mt-4">
+  <div class="row">
+    <!-- sidebar column -->
+    <div class="col-md-4 mb-4">
 
-    <div class="row">
-        <!-- profile image + upload form -->
-
-
-        <div class="col-md-5">
-            <div class="card mb-4">
-                <div class="card-body text-center">
-                    {% if user.profile_picture %}
-                        <img src="{{ url_for('uploaded_file', filename=user.profile_picture) }}" alt="Profile Picture" width="150" height="150" class="rounded-circle mb-3">
-                    {% else %}
-                        <div class="border rounded-circle d-flex align-items-center justify-content-center mb-3" style="width:150px; height:150px; background-color:#f0f0f0;">
-                            <span class="text-muted">No profile picture yet.</span>
-                        </div>
-                    {% endif %}
-                    <form method="POST" action="{{ url_for('upload_profile_image') }}" enctype="multipart/form-data">
-                        <div class="mb-3">
-                            <input type="file" name="profile_image" class="form-control">
-                        </div>
-                        <button type="submit" class="btn btn-primary">Upload New</button>
-                    </form>
-                </div>
-            </div>
+      <!-- profile section -->
+      <div class="card mb-3">
+        <div class="card-body d-flex align-items-center">
+          <!-- smaller profile pic -->
+          <img src="{{ url_for('uploaded_file', filename=user.profile_picture) }}"
+               alt="Profile Picture"
+               class="rounded-circle me-3"
+               style="width: 64px; height: 64px; object-fit: cover;">
+          <div>
+            <h5 class="card-title mb-0">{{ user.username }}</h5>
+            <small>Joined: {{ user.created_at.strftime('%Y-%m-%d') }}</small>
+          </div>
         </div>
+      </div>
 
-        <!-- account info + stats -->
-        <div class="col-md-7">
-            <div class="card">
-                <div class="card-header bg-teal text-white"><strong>Account Info</strong></div>
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item"><strong>Email:</strong> {{ user.email }}</li>
-                    <li class="list-group-item"><strong>Registered:</strong> {{ user.created_at.strftime('%Y-%m-%d') }}</li>
-                    <li class="list-group-item"><strong>Last Login:</strong>
-                        {% if user.last_login_at %}
-                            {{ user.last_login_at.strftime('%Y-%m-%d %H:%M') }}
-                        {% else %}
-                            Not available
-                        {% endif %}
-                    </li>
-                    <li class="list-group-item"><strong>Flashcards:</strong> {{ flashcard_count }}</li>
-                    <li class="list-group-item"><strong>Days Active:</strong> {{ days_active }} days</li>
-                    <li class="list-group-item text-center">
-                        <a href="{{ url_for('export_flashcards') }}" class="btn btn-outline-primary mt-2">Download Flashcards (CSV)</a>
-                    </li>
-                </ul>
-            </div>
+      <!-- upload profile picture -->
+      <div class="card mb-3">
+        <div class="card-body">
+          <form action="{{ url_for('upload_profile_image') }}" method="POST" enctype="multipart/form-data">
+            <label for="profile_image" class="form-label">Upload New Profile Picture</label>
+            <input type="file" name="profile_image" accept="image/*" class="form-control mb-2">
+            <button type="submit" class="btn btn-outline-primary w-100">Upload</button>
+          </form>
         </div>
+      </div>
+
+      <!-- action buttons -->
+      <div class="card mb-3">
+        <div class="card-body d-grid gap-2">
+          <a href="{{ url_for('export_flashcards') }}" class="btn btn-outline-secondary">Download Flashcards</a>
+          <a href="{{ url_for('browse_flashcards') }}" class="btn btn-outline-secondary">Browse Flashcards</a>
+          <a href="{{ url_for('add_flashcard') }}" class="btn btn-outline-secondary">Add Flashcard</a>
+        </div>
+      </div>
+
+      <!-- dark mode toggle -->
+      <div class="card mb-3">
+        <div class="card-body">
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" id="darkModeToggle">
+            <label class="form-check-label" for="darkModeToggle">Dark Mode</label>
+          </div>
+        </div>
+      </div>
+
     </div>
+
+    <!-- main column -->
+    <div class="col-md-8">
+
+      <!-- stats + level card -->
+      <div class="card mb-4">
+        <div class="card-body text-center">
+          <div class="row">
+            <div class="col">
+              <h3 class="mb-0">{{ flashcard_count }}</h3>
+              <small>Flashcards</small>
+            </div>
+            <div class="col">
+              <h3 class="mb-0">{{ days_active }}</h3>
+              <small>Days Active</small>
+            </div>
+            <div class="col">
+              <h3 class="mb-0">Lv {{ level }}</h3>
+              <small>{{ xp_to_next }} XP to next</small>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- activity feed -->
+      <div class="card mb-4">
+        <div class="card-body">
+          <h5 class="card-title">Activity Feed</h5>
+
+          {% if recent_activities %}
+          <ul class="list-group list-group-flush">
+            {% for activity in recent_activities %}
+            <li class="list-group-item border-0">
+              <div class="d-flex align-items-center gap-3">
+                <div style="font-size: 1.4rem; line-height: 1;">📝</div>
+                <div class="flex-grow-1">
+                  <div class="fw-normal">{{ activity.message }}</div>
+                  <div class="text-muted small mt-1">
+                    {{ activity.timestamp.strftime('%B %d, %Y at %H:%M') }}
+                  </div>
+                </div>
+              </div>
+            </li>
+            {% endfor %}
+          </ul>
+          {% else %}
+          <p class="fst-italic mb-0">No activity yet. Your progress updates will show here.</p>
+          {% endif %}
+        </div>
+      </div>
+
+    </div>
+  </div>
 </div>
 {% endblock %}

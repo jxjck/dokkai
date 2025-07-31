@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Edit Flashcard</h2>
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        <div class="mb-3">
+            {{ form.front.label }} {{ form.front(class="form-control") }}
+        </div>
+        <div class="mb-3">
+            {{ form.reading.label }} {{ form.reading(class="form-control") }}
+        </div>
+        <div class="mb-3">
+            {{ form.meaning.label }} {{ form.meaning(class="form-control") }}
+        </div>
+        <div class="mb-3">
+            {{ form.sentence.label }} {{ form.sentence(class="form-control") }}
+        </div>
+        <button type="submit" class="btn btn-success">Update</button>
+        <a href="{{ url_for('browse_flashcards') }}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

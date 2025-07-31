@@ -31,9 +31,15 @@ class User(UserMixin, db.Model):
 
 
     # wk4 store filename for user's profile picture
-    profile_picture = db.Column(db.String(255), nullable=True)
+    #edit - added default image to new profiles
+    profile_picture = db.Column(db.String(255), nullable=True, default="img/default_avatar.png")
 
 
+
+
+
+    #xp
+    xp = db.Column(db.Integer, default=0)
 
 
     def set_password(self, password):
@@ -46,6 +52,8 @@ class User(UserMixin, db.Model):
 
     def __repr__(self):
         return f'<User {self.username}>'
+
+
 
 class Flashcard(db.Model):
     __tablename__ = 'flashcards'
@@ -67,5 +75,24 @@ class Flashcard(db.Model):
     due_date = db.Column(db.DateTime, default=datetime.utcnow)
     last_review = db.Column(db.DateTime, default=None)
 
+
+    #for checking and removal of tags etc
+    is_grammar = db.Column(db.Boolean, default=False)
+
     def __repr__(self):
         return f"<Flashcard {self.front} - {self.back} (due {self.due_date})>"
+
+#31st july - activity feed stuff#
+class Activity(db.Model):
+    __tablename__ = 'activities'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    message = db.Column(db.String(255), nullable=False)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
+    user = db.relationship('User', backref='activities')
+
+    def __repr__(self):
+        return f"<Activity {self.message} at {self.timestamp}>"
+

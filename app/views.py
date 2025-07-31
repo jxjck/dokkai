@@ -1,8 +1,10 @@
 import os
+import re
+import uuid
 
-from flask import render_template, redirect, url_for, flash, request, Blueprint, Response, send_from_directory
+from flask import render_template, redirect, url_for, flash, request, Blueprint, Response, send_from_directory, session
 from app import app, db
-from app.models import User, Flashcard
+from app.models import User, Flashcard, Activity
 from app.forms import LoginForm, RegisterForm, FlashcardForm
 from flask_login import current_user, login_user, logout_user, login_required
 import sqlalchemy as sa
@@ -20,25 +22,90 @@ flashcards_bp = Blueprint('flashcards', __name__)
 
 scheduler = Scheduler()
 
+
+def log_activity(message):
+    if current_user.is_authenticated:
+        activity = Activity(user_id=current_user.id, message=message, timestamp=datetime.utcnow())
+        db.session.add(activity)
+        db.session.commit()
+
+
+
+
+
 @app.route('/flashcards', methods=['GET', 'POST'])
 @login_required
 def flashcards():
+    now = datetime.now(timezone.utc)
 
+    # Try to get card due right now
     flashcard = Flashcard.query.filter(
         Flashcard.user_id == current_user.id,
-        Flashcard.due_date <= datetime.now(timezone.utc)
+        Flashcard.due_date <= now
     ).order_by(Flashcard.due_date).first()
 
+    # If none due, try to get one due soon
+    if not flashcard:
+        soon = now + timedelta(minutes=1)
+        flashcard = Flashcard.query.filter(
+            Flashcard.user_id == current_user.id,
+            Flashcard.due_date <= soon
+        ).order_by(Flashcard.due_date).first()
 
+    # Count due cards
     total_due = Flashcard.query.filter(
         Flashcard.user_id == current_user.id,
-        Flashcard.due_date <= datetime.now(timezone.utc)
+        Flashcard.due_date <= now
     ).count()
 
+    # No card even within cooldown threshold
     if not flashcard:
+        # Only log once per day
+
+        last_completion = db.session.query(sa.func.max(Activity.timestamp)).filter(
+            Activity.user_id == current_user.id,
+            Activity.message.like("Completed all due flashcards%")
+        ).scalar()
+
+        if not last_completion or last_completion.date() < now.date():
+            # Calculate XP earned this session
+            cards_reviewed = session.pop('cards_reviewed', 0)
+            session.pop('xp_earned', None)
+            xp_earned = cards_reviewed * 10
+            current_user.xp += xp_earned
+
+            msg = f"Completed all due flashcards and earned {xp_earned} XP ✨" if xp_earned > 0 else "Completed all due flashcards"
+            db.session.add(Activity(
+                user_id=current_user.id,
+                message=msg,
+                timestamp=now
+            ))
+
+            # Streak detection
+            recent_days = db.session.query(Activity.timestamp).filter(
+                Activity.user_id == current_user.id,
+                Activity.message.like("Completed all due flashcards%")
+            ).order_by(Activity.timestamp.desc()).limit(5).all()
+
+            streak_days = sorted({ts.date() for (ts,) in recent_days}, reverse=True)
+            today = now.date()
+
+            if (
+                today in streak_days and
+                (today - timedelta(days=1)) in streak_days and
+                (today - timedelta(days=2)) in streak_days
+            ):
+                db.session.add(Activity(
+                    user_id=current_user.id,
+                    message="Hit a 3-day flashcard streak! 🔥",
+                    timestamp=now
+                ))
+
+            db.session.commit()
 
         return render_template('flashcards.html', flashcard=None, total_due=0, show_answer=False)
 
+    # User clicked POST
     if request.method == 'POST':
         if request.form.get('action') == 'show':
             return render_template('flashcards.html', flashcard=flashcard, total_due=total_due, show_answer=True)
@@ -54,19 +121,27 @@ def flashcards():
             flash('Invalid rating.', 'danger')
             return redirect(url_for('flashcards'))
 
-        #build fsrs card, check here
-        fsrs_card = Card()
+        # Track session XP and review count
+        cards_reviewed = session.get('cards_reviewed', 0)
+        cards_reviewed += 1
+        session['cards_reviewed'] = cards_reviewed
 
+        # Update card with FSRS
+        fsrs_card = Card()
         updated_card, review_log = scheduler.review_card(fsrs_card, rating)
         flashcard.due_date = updated_card.due
-        flashcard.last_review = datetime.now(timezone.utc)
+        flashcard.last_review = now
+
         db.session.commit()
 
         flash(f"Card updated! Next due: {flashcard.due_date}", 'success')
         return redirect(url_for('flashcards'))
 
-
     return render_template('flashcards.html', flashcard=flashcard, total_due=total_due, show_answer=False)
+
+
+
+
 
 
 @app.route('/add_flashcard', methods=['GET', 'POST'])
@@ -85,9 +160,22 @@ def add_flashcard():
         )
         db.session.add(new_card)
         db.session.commit()
-        flash('Flashcard added!', 'success')
-        return redirect(url_for('flashcards'))
+
+        # ✅ Log gamified activity
+        db.session.add(Activity(
+            user_id=current_user.id,
+            message="Added a new flashcard ✅",
+            timestamp=datetime.utcnow()
+        ))
+        db.session.commit()
+
+        flash("Flashcard added successfully.", "success")
+        return redirect(url_for('add_flashcard'))
+
     return render_template('add_flashcard.html', form=form)
+
+
+
 
 @app.route('/browse')
 @login_required
@@ -106,16 +194,40 @@ def allowed_file(filename):
 @login_required
 def upload_profile_image():
     file = request.files.get('profile_image')
-    if file and allowed_file(file.filename):
-        filename = secure_filename(file.filename)
-        upload_path = os.path.join(app.root_path, 'data', 'uploads', filename)
-        os.makedirs(os.path.dirname(upload_path), exist_ok=True)  # make sure the dir exists
-        file.save(upload_path)
+    if not file or file.filename == '':
+        flash('No file selected.', 'danger')
+        return redirect(url_for('dashboard'))
 
-        current_user.profile_picture = filename
-        db.session.commit()
+    if not file.filename.lower().endswith(('.png', '.jpg', '.jpeg', '.gif')):
+        flash('Invalid file type. Only images are allowed.', 'danger')
+        return redirect(url_for('dashboard'))
 
+    # gen unique filename
+    filename = f"{uuid.uuid4().hex}_{file.filename}"
+    filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    file.save(filepath)
+
+    # delete old
+    if current_user.profile_picture:
+        old_path = os.path.join(app.config['UPLOAD_FOLDER'], current_user.profile_picture)
+        if os.path.exists(old_path):
+            os.remove(old_path)
+
+    # update database
+    current_user.profile_picture = filename
+    db.session.commit()
+
+    # log activity to feed
+    activity = Activity(
+        user_id=current_user.id,
+        message="Uploaded new profile picture 🖼️"
+    )
+    db.session.add(activity)
+    db.session.commit()
+
+    flash('Profile picture updated!', 'success')
     return redirect(url_for('dashboard'))
+
 
 
 # route 4 uploaded profile pictures
@@ -125,8 +237,120 @@ def uploaded_file(filename):
 
 
 
+#grammar page (started 25th jul)
+@app.route('/grammar')
+@login_required
+def grammar():
+    return render_template('grammar.html')
 
 
+#in development - adding card from grammar explanation
+@app.route('/add_grammar_card', methods=['POST'])
+@login_required
+def add_grammar_card():
+    front = request.form.get('front', '').strip()
+    reading = request.form.get('reading', '').strip()
+    meaning = request.form.get('meaning', '').strip()
+    raw_sentence = request.form.get('sentence', '')
+
+    # extract clean sentence
+    split_sentence = re.split(r'[。！？]', raw_sentence)
+    base_sentence = split_sentence[0] + "。" if split_sentence else ""
+    sentence_cleaned = re.sub(r'(?!<mark>|</mark>)(<[^>]*>)', '', base_sentence)
+    sentence = sentence_cleaned.strip()
+
+    back = request.form.get('back', '').strip()
+
+    new_card = Flashcard(
+        user_id=current_user.id,
+        front=front,
+        back=back,
+        reading=reading,
+        meaning=meaning,
+        sentence=sentence,
+        is_grammar=True
+    )
+
+    db.session.add(new_card)
+    db.session.commit()
+
+    # 📚 Log gamified activity
+    db.session.add(Activity(
+        user_id=current_user.id,
+        message="Added a grammar flashcard 📚",
+        timestamp=datetime.utcnow()
+    ))
+    db.session.commit()
+
+    flash('Grammar flashcard added!', 'success')
+    return redirect(url_for('grammar'))
+
+
+
+
+#####editing and deleting cards on the browse cards page############
+# edit a flashcard
+@app.route("/edit/<int:card_id>", methods=["GET", "POST"])
+@login_required
+def edit_flashcard(card_id):
+    card = Flashcard.query.get_or_404(card_id)
+    if card.user_id != current_user.id:
+        flash("Unauthorized access.", "danger")
+        return redirect(url_for("browse_flashcards"))
+
+    form = FlashcardForm(obj=card)
+    if form.validate_on_submit():
+        card.front = form.front.data
+        card.reading = form.reading.data
+        card.meaning = form.meaning.data
+        card.sentence = form.sentence.data
+        db.session.commit()
+        flash("Card updated!", "success")
+        return redirect(url_for("browse_flashcards"))
+
+    return render_template("edit_flashcard.html", form=form, card=card)
+
+
+# delete card
+@app.route("/delete/<int:card_id>", methods=["POST"])
+@login_required
+def delete_flashcard(card_id):
+    card = Flashcard.query.get_or_404(card_id)
+    if card.user_id != current_user.id:
+        flash("Unauthorized access.", "danger")
+        return redirect(url_for("browse_flashcards"))
+
+    db.session.delete(card)
+    db.session.commit()
+    flash("Card deleted.", "success")
+    return redirect(url_for("browse_flashcards"))
+
+
+
+
+
+
+
+
+
+
+
+
+
+#leaderboard page
+@app.route('/leaderboard')
+@login_required
+def leaderboard():
+    # get users and flashcard count
+    results = db.session.query(
+        User,
+        sa.func.count(Flashcard.id).label('card_count')
+    ).outerjoin(Flashcard).group_by(User.id).order_by(sa.desc('card_count')).all()
+
+    # list w rank info (check over)
+    leaderboard_data = [(user, count, idx + 1) for idx, (user, count) in enumerate(results)]
+
+    return render_template('leaderboard.html', leaderboard=leaderboard_data)
 
 
 
@@ -145,22 +369,37 @@ def home():
 @app.route('/dashboard')
 @login_required
 def dashboard():
-    # get full user object from database to avoid LocalProxy issues
-    user = User.query.get(current_user.id)
+    from app.models import Flashcard, Activity
 
-    # calculate stats
-    flashcard_count = Flashcard.query.filter_by(user_id=user.id).count()
-    if user.last_login_at:
-        days_active = (datetime.utcnow().date() - user.last_login_at.date()).days + 1
-    else:
-        days_active = 1
+    user_id = current_user.id
+    flashcard_count = Flashcard.query.filter_by(user_id=user_id).count()
+
+    # days active
+    first_activity = db.session.query(sa.func.min(Flashcard.last_review)).filter_by(user_id=user_id).scalar()
+    days_active = (datetime.utcnow().date() - first_activity.date()).days + 1 if first_activity else 0
+
+    # get last 10 activities
+    recent_activities = Activity.query.filter_by(user_id=user_id).order_by(Activity.timestamp.desc()).limit(10).all()
+
+    # calculate XP and level
+    xp = sum(10 for a in recent_activities if "earned 10 XP" in a.message)
+    level = xp // 100
+    xp_to_next = 100 - (xp % 100)
 
     return render_template(
         'dashboard.html',
-        user=user,
+        user=current_user,
         flashcard_count=flashcard_count,
-        days_active=days_active
+        days_active=days_active,
+        recent_activities=recent_activities,
+        xp=xp,
+        level=level,
+        xp_to_next=xp_to_next,
+        badges=[]  # we'll fill this in later
     )
+
+
+
 
 
 
@@ -225,7 +464,14 @@ def register():
         return redirect(url_for('home'))
     form = RegisterForm()
     if form.validate_on_submit():
-        new_user = User(username=form.username.data, email=form.email.data)
+
+        #added default profile picture
+        new_user = User(
+            username=form.username.data,
+            email=form.email.data,
+            profile_picture="default_avatar.png"
+        )
+
         new_user.set_password(form.password.data)
         db.session.add(new_user)
         db.session.commit()
