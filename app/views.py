@@ -38,13 +38,13 @@ def log_activity(message):
 def flashcards():
     now = datetime.now(timezone.utc)
 
-    # Try to get card due right now
+    # card due now
     flashcard = Flashcard.query.filter(
         Flashcard.user_id == current_user.id,
         Flashcard.due_date <= now
     ).order_by(Flashcard.due_date).first()
 
-    # If none due, try to get one due soon
+    # if none due
     if not flashcard:
         soon = now + timedelta(minutes=1)
         flashcard = Flashcard.query.filter(
@@ -52,15 +52,15 @@ def flashcards():
             Flashcard.due_date <= soon
         ).order_by(Flashcard.due_date).first()
 
-    # Count due cards
+    # count due cards
     total_due = Flashcard.query.filter(
         Flashcard.user_id == current_user.id,
         Flashcard.due_date <= now
     ).count()
 
-    # No card even within cooldown threshold
+    # log only once per day
     if not flashcard:
-        # Only log once per day
+
 
         last_completion = db.session.query(sa.func.max(Activity.timestamp)).filter(
             Activity.user_id == current_user.id,
@@ -68,7 +68,7 @@ def flashcards():
         ).scalar()
 
         if not last_completion or last_completion.date() < now.date():
-            # Calculate XP earned this session
+            # xp calculation logic
             cards_reviewed = session.pop('cards_reviewed', 0)
             session.pop('xp_earned', None)
             xp_earned = cards_reviewed * 10
@@ -81,7 +81,7 @@ def flashcards():
                 timestamp=now
             ))
 
-            # Streak detection
+            # streak
             recent_days = db.session.query(Activity.timestamp).filter(
                 Activity.user_id == current_user.id,
                 Activity.message.like("Completed all due flashcards%")
@@ -105,7 +105,7 @@ def flashcards():
 
         return render_template('flashcards.html', flashcard=None, total_due=0, show_answer=False)
 
-    # User clicked POST
+
     if request.method == 'POST':
         if request.form.get('action') == 'show':
             return render_template('flashcards.html', flashcard=flashcard, total_due=total_due, show_answer=True)
@@ -121,12 +121,12 @@ def flashcards():
             flash('Invalid rating.', 'danger')
             return redirect(url_for('flashcards'))
 
-        # Track session XP and review count
+        # track xp
         cards_reviewed = session.get('cards_reviewed', 0)
         cards_reviewed += 1
         session['cards_reviewed'] = cards_reviewed
 
-        # Update card with FSRS
+        # fsrs update
         fsrs_card = Card()
         updated_card, review_log = scheduler.review_card(fsrs_card, rating)
         flashcard.due_date = updated_card.due
@@ -161,7 +161,7 @@ def add_flashcard():
         db.session.add(new_card)
         db.session.commit()
 
-        # ✅ Log gamified activity
+        # log
         db.session.add(Activity(
             user_id=current_user.id,
             message="Added a new flashcard ✅",
@@ -274,7 +274,7 @@ def add_grammar_card():
     db.session.add(new_card)
     db.session.commit()
 
-    # 📚 Log gamified activity
+    # log
     db.session.add(Activity(
         user_id=current_user.id,
         message="Added a grammar flashcard 📚",
