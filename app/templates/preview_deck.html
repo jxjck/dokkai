@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}{{ deck.name }}{% endblock %}
+
+{% block content %}
+  <h1 class="mb-4">{{ deck.name }}</h1>
+  <p class="mb-3 text-muted">{{ deck.description }}</p>
+
+  <ul class="list-group mb-4">
+    {% for card in deck.cards %}
+      <li class="list-group-item">
+        <strong>{{ card.front }}</strong> - {{ card.back }}
+        {% if card.reading %}
+          <span class="text-muted ms-2">({{ card.reading }})</span>
+        {% endif %}
+        {% if card.sentence %}
+          <div class="mt-1 small text-muted">{{ card.sentence }}</div>
+        {% endif %}
+      </li>
+    {% endfor %}
+  </ul>
+
+  <a href="{{ url_for('browse_decks') }}" class="btn btn-secondary">Back</a>
+{% endblock %}

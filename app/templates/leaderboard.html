@@ -12,20 +12,27 @@
                     <th scope="col">Rank</th>
                     <th scope="col">User</th>
                     <th scope="col">Flashcards</th>
+                    <th scope="col">Level</th>
                 </tr>
             </thead>
             <tbody>
-                {% for user, count, rank in leaderboard %}
+                {% for user, count, rank, level in leaderboard %}
                 <tr>
                     <th scope="row">#{{ rank }}</th>
                     <td>
                         <div class="d-flex align-items-center">
-                            <img src="{{ url_for('uploaded_file', filename=user.profile_picture) }}"
-                                 class="rounded-circle me-2" width="50" height="50" alt="Profile">
-                            <span>{{ user.username }}</span>
+                            {% set is_default = user.profile_picture.startswith('img/') %}
+                            <img src="{{ url_for('static', filename=user.profile_picture) if is_default else url_for('uploaded_file', filename=user.profile_picture) }}"
+                                 class="rounded-circle me-2"
+                                 width="50"
+                                 height="50"
+                                 alt="Profile">
+                            <span class="me-2">{{ user.username }}</span>
+                            <a href="{{ url_for('public_profile', username=user.username) }}" class="btn btn-sm btn-outline-info">View Profile</a>
                         </div>
                     </td>
                     <td>{{ count }}</td>
+                    <td>Lv {{ level }}</td>
                 </tr>
                 {% endfor %}
             </tbody>

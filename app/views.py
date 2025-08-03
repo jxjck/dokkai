@@ -3,18 +3,24 @@ import re
 import uuid
 
 from flask import render_template, redirect, url_for, flash, request, Blueprint, Response, send_from_directory, session
+from sqlalchemy import func
+
 from app import app, db
-from app.models import User, Flashcard, Activity
+from app.models import User, Flashcard, Activity, Deck
 from app.forms import LoginForm, RegisterForm, FlashcardForm
 from flask_login import current_user, login_user, logout_user, login_required
 import sqlalchemy as sa
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta, timezone, date
 import csv
 from io import StringIO
 
 from fsrs import Scheduler, Card, Rating
 
 from werkzeug.utils import secure_filename
+
+from app.premade_decks import days_of_week_deck
+
+from app.premade_decks import premade_decks
 
 
 flashcards_bp = Blueprint('flashcards', __name__)
@@ -164,7 +170,7 @@ def add_flashcard():
         # log
         db.session.add(Activity(
             user_id=current_user.id,
-            message="Added a new flashcard ✅",
+            message="Added a new flashcard!",
             timestamp=datetime.utcnow()
         ))
         db.session.commit()
@@ -173,6 +179,98 @@ def add_flashcard():
         return redirect(url_for('add_flashcard'))
 
     return render_template('add_flashcard.html', form=form)
+
+
+
+
+
+
+
+
+
+
+@app.route("/browse_decks")
+@login_required
+def browse_decks():
+    return render_template("browse_decks.html", decks=premade_decks.values())
+
+@app.route("/preview_premade_deck/<deck_name>")
+@login_required
+def preview_premade_deck(deck_name):
+    deck = premade_decks.get(deck_name)
+    if not deck:
+        flash("Deck not found.", "danger")
+        return redirect(url_for("browse_decks"))
+    return render_template("preview_deck.html", deck=deck)
+
+
+@app.route("/import_premade_deck", methods=["POST"])
+@login_required
+def import_premade_deck():
+    deck_name = request.form.get("deck_name")
+    deck = premade_decks.get(deck_name)
+    if not deck:
+        flash("Deck not found.", "danger")
+        return redirect(url_for("browse_decks"))
+
+    for card in deck["cards"]:
+        flashcard = Flashcard(
+            user_id=current_user.id,
+            front=card["front"],
+            back=card["back"],
+            reading=card.get("reading", ""),
+            meaning=card.get("meaning", ""),
+            sentence=card.get("sentence", ""),
+        )
+        db.session.add(flashcard)
+
+    db.session.commit()
+    flash(f"{deck_name} deck imported!", "success")
+    return redirect(url_for("browse_flashcards"))
+
+
+
+
+@app.route('/import_deck/<int:deck_id>', methods=['POST'])
+@login_required
+def import_deck(deck_id):
+    original = Deck.query.get_or_404(deck_id)
+    if original.user_id is not None:
+        flash("You can only import pre-made decks.", "warning")
+        return redirect(url_for('browse_decks'))
+
+    # create new deck for user
+    user_deck = Deck(name=original.name, description=original.description, user_id=current_user.id)
+    db.session.add(user_deck)
+    db.session.commit()
+
+    # copy cards
+    for card in original.flashcards:
+        copy = Flashcard(
+            user_id=current_user.id,
+            front=card.front,
+            back=card.back,
+            reading=card.reading,
+            meaning=card.meaning,
+            sentence=card.sentence,
+            due_date=datetime.utcnow(),
+            deck_id=user_deck.id
+        )
+        db.session.add(copy)
+
+    db.session.commit()
+    flash(f"Imported deck: {original.name}", "success")
+    return redirect(url_for('flashcards'))
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -244,7 +342,7 @@ def grammar():
     return render_template('grammar.html')
 
 
-#in development - adding card from grammar explanation
+#adding card from grammar explanation
 @app.route('/add_grammar_card', methods=['POST'])
 @login_required
 def add_grammar_card():
@@ -253,7 +351,7 @@ def add_grammar_card():
     meaning = request.form.get('meaning', '').strip()
     raw_sentence = request.form.get('sentence', '')
 
-    # extract clean sentence
+    #extract clean sentence
     split_sentence = re.split(r'[。！？]', raw_sentence)
     base_sentence = split_sentence[0] + "。" if split_sentence else ""
     sentence_cleaned = re.sub(r'(?!<mark>|</mark>)(<[^>]*>)', '', base_sentence)
@@ -274,7 +372,7 @@ def add_grammar_card():
     db.session.add(new_card)
     db.session.commit()
 
-    # log
+    #log logic
     db.session.add(Activity(
         user_id=current_user.id,
         message="Added a grammar flashcard 📚",
@@ -337,25 +435,43 @@ def delete_flashcard(card_id):
 
 
 
+
 #leaderboard page
 @app.route('/leaderboard')
 @login_required
 def leaderboard():
-    # get users and flashcard count
+    card_count = sa.func.count(Flashcard.id).label('card_count')
+
+    #get user and card count
     results = db.session.query(
         User,
-        sa.func.count(Flashcard.id).label('card_count')
-    ).outerjoin(Flashcard).group_by(User.id).order_by(sa.desc('card_count')).all()
+        card_count
+    ).outerjoin(Flashcard).group_by(User.id).all()
 
-    # list w rank info (check over)
-    leaderboard_data = [(user, count, idx + 1) for idx, (user, count) in enumerate(results)]
+    #sort users in Python by level and then flashcard count
+    sorted_results = sorted(results, key=lambda item: (item[0].level, item[1]), reverse=True)
+
+    #rank thing
+    leaderboard_data = [
+        (user, count, idx + 1, user.level)
+        for idx, (user, count) in enumerate(sorted_results)
+    ]
 
     return render_template('leaderboard.html', leaderboard=leaderboard_data)
 
 
 
+#public profile thing on leaderboard
+@app.route('/user/<username>')
+def public_profile(username):
+    user = User.query.filter_by(username=username).first_or_404()
+    flashcard_count = Flashcard.query.filter_by(user_id=user.id).count()
+    activities = Activity.query.filter_by(user_id=user.id).order_by(Activity.timestamp.desc()).limit(10).all()
 
-
+    return render_template('public_profile.html',
+                           user=user,
+                           flashcard_count=flashcard_count,
+                           activities=activities)
 
 
 
@@ -369,34 +485,49 @@ def home():
 @app.route('/dashboard')
 @login_required
 def dashboard():
-    from app.models import Flashcard, Activity
+    user = current_user
 
-    user_id = current_user.id
-    flashcard_count = Flashcard.query.filter_by(user_id=user_id).count()
+    flashcard_count = Flashcard.query.filter_by(user_id=user.id).count()
 
-    # days active
-    first_activity = db.session.query(sa.func.min(Flashcard.last_review)).filter_by(user_id=user_id).scalar()
-    days_active = (datetime.utcnow().date() - first_activity.date()).days + 1 if first_activity else 0
+    #track unique days user has completed all flashcards
+    unique_days = db.session.query(func.date(Activity.timestamp)).filter(
+        Activity.user_id == user.id,
+        Activity.message.like("Completed all due flashcards%")
+    ).distinct().count()
 
-    # get last 10 activities
-    recent_activities = Activity.query.filter_by(user_id=user_id).order_by(Activity.timestamp.desc()).limit(10).all()
+    #recent activity
+    recent_activities = Activity.query.filter_by(user_id=user.id).order_by(
+        Activity.timestamp.desc()).limit(5).all()
 
-    # calculate XP and level
-    xp = sum(10 for a in recent_activities if "earned 10 XP" in a.message)
-    level = xp // 100
-    xp_to_next = 100 - (xp % 100)
+    #xp and level
+    xp = user.xp
+    level = int((xp / 100) ** 0.5)
+    xp_for_next = ((level + 1) ** 2) * 100
+    xp_to_next = xp_for_next - xp
 
-    return render_template(
-        'dashboard.html',
-        user=current_user,
-        flashcard_count=flashcard_count,
-        days_active=days_active,
-        recent_activities=recent_activities,
-        xp=xp,
-        level=level,
-        xp_to_next=xp_to_next,
-        badges=[]  # we'll fill this in later
-    )
+    # todays cards
+    today = date.today()
+    reviewed_today = Flashcard.query.filter(
+        Flashcard.user_id == user.id,
+        Flashcard.last_review != None,
+        func.date(Flashcard.last_review) == today
+    ).count()
+
+    # recs
+    reading_minutes = reviewed_today * 2
+    listening_minutes = int(reviewed_today * 1.5)
+
+    return render_template('dashboard.html',
+                           user=user,
+                           flashcard_count=flashcard_count,
+                           days_active=unique_days,
+                           recent_activities=recent_activities,
+                           level=level,
+                           xp_to_next=xp_to_next,
+                           reading_minutes=reading_minutes,
+                           listening_minutes=listening_minutes)
+
+
 
 
 
@@ -469,14 +600,18 @@ def register():
         new_user = User(
             username=form.username.data,
             email=form.email.data,
-            profile_picture="default_avatar.png"
+            profile_picture="img/default_avatar.png"
         )
 
         new_user.set_password(form.password.data)
         db.session.add(new_user)
         db.session.commit()
+
+        flash('Account created :) You can now log in at the top right.', 'success')
         return redirect(url_for('home'))
     return render_template('generic_form.html', title='Register', form=form)
+
+
 
 @app.route('/logout')
 def logout():

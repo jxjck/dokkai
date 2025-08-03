@@ -10,7 +10,11 @@
       <div class="card mb-3">
         <div class="card-body d-flex align-items-center">
           <!-- smaller profile pic -->
-          <img src="{{ url_for('uploaded_file', filename=user.profile_picture) }}"
+
+          {% set is_default = user.profile_picture.startswith('img/') %}
+<img src="{{ url_for('static', filename=user.profile_picture) if is_default else url_for('uploaded_file', filename=user.profile_picture) }}"
+
+
                alt="Profile Picture"
                class="rounded-circle me-3"
                style="width: 64px; height: 64px; object-fit: cover;">
@@ -75,6 +79,20 @@
           </div>
         </div>
       </div>
+
+
+      <!-- daily recommendations (new testing) -->
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="card-title">Daily Recommendations</h5>
+    <ul class="list-unstyled mb-0">
+      <li>📖 Reading: {{ reading_minutes }} minutes</li>
+      <li>🎧 Listening: {{ listening_minutes }} minutes</li>
+    </ul>
+    <small class="text-muted">Based on flashcards reviewed today</small>
+  </div>
+</div>
+
 
       <!-- activity feed -->
       <div class="card mb-4">

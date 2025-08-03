@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Browse Decks{% endblock %}
+
+{% block content %}
+  <h1 class="mb-4">Browse Pre-made Decks</h1>
+
+  {% for deck in decks %}
+    <div class="card mb-4 p-4">
+      <h2 class="h5 fw-bold mb-2">{{ deck.name }}</h2>
+      <p class="mb-1 text-muted">{{ deck.description }}</p>
+      <p class="mb-3 text-muted">Cards: {{ deck.cards|length }}</p>
+      <div class="d-flex gap-2">
+        <form method="POST" action="{{ url_for('import_premade_deck') }}">
+          <input type="hidden" name="deck_name" value="{{ deck.name }}">
+          <button class="btn btn-outline-secondary" type="submit">Import Deck</button>
+        </form>
+        <a href="{{ url_for('preview_premade_deck', deck_name=deck.name) }}" class="btn btn-outline-secondary">Preview</a>
+      </div>
+    </div>
+  {% endfor %}
+{% endblock %}

@@ -42,6 +42,11 @@ class User(UserMixin, db.Model):
     xp = db.Column(db.Integer, default=0)
 
 
+    @property
+    def level(self):
+        return int((self.xp / 100) ** 0.5)
+
+
     def set_password(self, password):
         from werkzeug.security import generate_password_hash
         self.password_hash = generate_password_hash(password)
@@ -79,8 +84,29 @@ class Flashcard(db.Model):
     #for checking and removal of tags etc
     is_grammar = db.Column(db.Boolean, default=False)
 
+    #new deck id thing for custom decks
+    deck_id = db.Column(db.Integer, db.ForeignKey('decks.id'), nullable=True)
+
     def __repr__(self):
         return f"<Flashcard {self.front} - {self.back} (due {self.due_date})>"
+
+#aug- bonus feature- pre-made decks for users
+class Deck(db.Model):
+    __tablename__ = 'decks'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(128))
+    description = db.Column(db.String(256))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)  # null = system deck
+
+    # relationship to flashcards
+    flashcards = db.relationship('Flashcard', backref='deck', lazy=True)
+
+
+
+
+
+
+
 
 #31st july - activity feed stuff#
 class Activity(db.Model):

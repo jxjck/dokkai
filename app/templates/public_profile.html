@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}{{ user.username }}'s Profile | Dokkai{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="card mb-4">
+    <div class="card-body d-flex align-items-center">
+      {% set is_default = user.profile_picture.startswith('img/') %}
+      <img src="{{ url_for('static', filename=user.profile_picture) if is_default else url_for('uploaded_file', filename=user.profile_picture) }}"
+           class="rounded-circle me-3"
+           width="80" height="80" style="object-fit: cover;" alt="Profile">
+      <div>
+        <h3 class="mb-0">{{ user.username }}</h3>
+        <p class="mb-1">Joined: {{ user.created_at.strftime('%Y-%m-%d') }}</p>
+        <p class="mb-0">Level: {{ user.level }} | Flashcards: {{ flashcard_count }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">Recent Activity</h5>
+      {% if activities %}
+        <ul class="list-group list-group-flush">
+          {% for activity in activities %}
+            <li class="list-group-item">
+              <div>{{ activity.message }}</div>
+              <small class="text-muted">{{ activity.timestamp.strftime('%B %d, %Y at %H:%M') }}</small>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="fst-italic mb-0">No recent activity.</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

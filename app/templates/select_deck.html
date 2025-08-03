@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4">Select a Deck to Review</h1>
+    {% if user_decks %}
+        <div class="row">
+            {% for deck in user_decks %}
+            <div class="col-md-4 mb-4">
+                <div class="card bg-dark text-white shadow rounded-3 p-3 h-100">
+                    <h4>{{ deck.name }}</h4>
+                    <p class="text-muted mb-2">{{ deck.description }}</p>
+                    <p>New: {{ deck.new }} | Learn: {{ deck.learning }} | Due: {{ deck.due }}</p>
+                    <form method="POST" action="{{ url_for('start_deck_review') }}">
+                        <input type="hidden" name="deck_id" value="{{ deck.id }}">
+                        <button type="submit" class="btn btn-primary">Start Review</button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>You haven't added any decks yet.</p>
+    {% endif %}
+
+    <div class="mt-4">
+        <a href="{{ url_for('browse_decks') }}" class="btn btn-outline-info">Browse Pre-made Decks</a>
+    </div>
+</div>
+{% endblock %}
