@@ -34,12 +34,11 @@ class User(UserMixin, db.Model):
     #edit - added default image to new profiles
     profile_picture = db.Column(db.String(255), nullable=True, default="img/default_avatar.png")
 
-
-
-
-
     #xp
     xp = db.Column(db.Integer, default=0)
+
+    #public profile toggle 3aug
+    show_activity_public = db.Column(db.Boolean, default=True)
 
 
     @property

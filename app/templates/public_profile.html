@@ -20,18 +20,25 @@
   <div class="card">
     <div class="card-body">
       <h5 class="card-title">Recent Activity</h5>
-      {% if activities %}
-        <ul class="list-group list-group-flush">
-          {% for activity in activities %}
-            <li class="list-group-item">
-              <div>{{ activity.message }}</div>
-              <small class="text-muted">{{ activity.timestamp.strftime('%B %d, %Y at %H:%M') }}</small>
-            </li>
-          {% endfor %}
-        </ul>
-      {% else %}
-        <p class="fst-italic mb-0">No recent activity.</p>
-      {% endif %}
+
+     {% if user.show_activity_public %}
+  {% if activities %}
+    <ul class="list-group list-group-flush">
+      {% for activity in activities %}
+        <li class="list-group-item">
+          <div>{{ activity.message }}</div>
+          <small class="text-muted">{{ activity.timestamp.strftime('%B %d, %Y at %H:%M') }}</small>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p class="fst-italic mb-0">No recent activity.</p>
+  {% endif %}
+{% else %}
+  <p class="fst-italic mb-0">This user's activity feed is private.</p>
+{% endif %}
+
+
     </div>
   </div>
 </div>

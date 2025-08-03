@@ -466,12 +466,26 @@ def leaderboard():
 def public_profile(username):
     user = User.query.filter_by(username=username).first_or_404()
     flashcard_count = Flashcard.query.filter_by(user_id=user.id).count()
-    activities = Activity.query.filter_by(user_id=user.id).order_by(Activity.timestamp.desc()).limit(10).all()
+
+    activities = []
+    if user.show_activity_public:
+        activities = Activity.query.filter_by(user_id=user.id).order_by(Activity.timestamp.desc()).limit(10).all()
 
     return render_template('public_profile.html',
                            user=user,
                            flashcard_count=flashcard_count,
                            activities=activities)
+
+
+
+@app.route('/toggle_public_activity', methods=['POST'])
+@login_required
+def toggle_public_activity():
+    show = request.form.get('show_activity_public') == 'on'
+    current_user.show_activity_public = show
+    db.session.commit()
+    flash("Public profile setting updated.", "success")
+    return redirect(url_for('dashboard'))
 
 
 
