@@ -3,45 +3,130 @@
 {% block content %}
 <div class="container mt-5">
 
-    <div class="text-center mb-4">
-        <h1>Welcome to Dokkai</h1>
-        <p>An optimised, fun approach to language learning</p>
+  <div class="text-center mb-5">
+    <h1 class="display-5 fw-bold">Welcome to Dokkai</h1>
+    <p class="lead">An all-in-one platform for serious Japanese learners.</p>
+    <p class="text-muted">Track progress. Learn grammar. Master vocabulary. Get native content recommendations.</p>
+  </div>
+
+
+  <div class="row">
+
+<div class="col-md-3 mb-4">
+  <div class="card h-100 shadow-sm">
+    <div class="card-header fw-semibold adaptive-header border-bottom">
+      Learn by Topic
+    </div>
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item">
+        <a href="{{ url_for('grammar') }}" class="text-decoration-none text-reset">
+          <i class="bi bi-journal-text me-2"></i> Grammar<br>
+          <small class="text-muted">Build a solid foundation</small>
+        </a>
+      </li>
+      <li class="list-group-item hover-link">
+  <a href="{{ url_for('kana') }}" class="text-decoration-none">
+    <i class="bi bi-kanban me-2"></i> Kana<br>
+    <small class="text-muted">Master the phonetic scripts</small>
+  </a>
+</li>
+
+      <li class="list-group-item">
+        <a href="{{ url_for('leaderboard') }}" class="text-decoration-none text-reset">
+          <i class="bi bi-bar-chart-line me-2"></i> Leaderboard<br>
+          <small class="text-muted">See how you rank</small>
+        </a>
+      </li>
+      <li class="list-group-item">
+        <a href="{{ url_for('flashcards') }}" class="text-decoration-none text-reset">
+          <i class="bi bi-bookmark-check me-2"></i> Vocabulary<br>
+          <small class="text-muted">Grow your core knowledge</small>
+        </a>
+      </li>
+    </ul>
+  </div>
+</div>
+
+
+    <!-- js chart -->
+<div class="col-md-6 mb-4 text-center d-flex align-items-center justify-content-center">
+  {% if current_user.is_authenticated %}
+  <div class="card w-100 p-4 shadow-sm" style="min-height: 300px;">
+    <h5 class="mb-3 text-start">Flashcards Reviewed (Last 7 Days)</h5>
+    <canvas id="flashcardChart" width="100%" height="60"></canvas>
+    <script>
+      const ctx = document.getElementById('flashcardChart').getContext('2d');
+      const flashcardChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: {{ card_data.keys()|list|tojson }},
+          datasets: [{
+            label: 'Cards Reviewed',
+            data: {{ card_data.values()|list|tojson }},
+            backgroundColor: '#2a9d8f'
+          }]
+        },
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                color: '#ccc'
+              }
+            },
+            x: {
+              ticks: {
+                color: '#ccc'
+              }
+            }
+          },
+          plugins: {
+            legend: { display: false }
+          }
+        }
+      });
+    </script>
+  </div>
+  {% else %}
+  <div class="border border-2 rounded p-5 w-100 h-100" style="min-height: 300px; border-style: dashed;">
+    <i class="bi bi-map display-4 text-muted mb-3"></i>
+    <h5 class="text-muted">Future Activity View / Map / Main Feature</h5>
+    <p class="text-muted">Placeholder for main application content</p>
+  </div>
+  {% endif %}
+</div>
+
+
+    <!-- auth -->
+    <div class="col-md-3 mb-4">
+      <div class="card h-100 shadow-sm">
+        {% if current_user.is_authenticated %}
+        <div class="card-header fw-semibold adaptive-header border-bottom">
+          Welcome Back
+        </div>
+        <div class="card-body">
+          <p class="card-text">Continue learning from where you left off or explore new content.</p>
+          <a href="{{ url_for('dashboard') }}" class="btn btn-success w-100">Go to Dashboard</a>
+        </div>
+        {% else %}
+        <div class="card-header fw-semibold adaptive-header border-bottom">
+          Join Dokkai to Save Your Progress
+        </div>
+        <div class="card-body">
+          <p class="card-text">Short description of benefits:</p>
+          <ul class="mb-3 ps-3">
+            <li><i class="bi bi-check2-circle text-primary me-1"></i>Progress tracking</li>
+            <li><i class="bi bi-check2-circle text-primary me-1"></i>Personalized study plans</li>
+            <li><i class="bi bi-check2-circle text-primary me-1"></i>Community features</li>
+          </ul>
+          <a href="{{ url_for('register') }}" class="btn btn-dark w-100 mb-2">Register</a>
+          <a href="{{ url_for('login') }}" class="btn btn-dark w-100">Login</a>
+        </div>
+        {% endif %}
+      </div>
     </div>
 
-    <!-- 2 col layout -->
-    <div class="row">
-        <!-- left column -->
-        <div class="col-md-6 mb-4">
-            <div class="card">
-                <div class="card-header">
-                    Learn by Topic
-                </div>
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item">📘 Grammar</li>
-                    <li class="list-group-item">あ Hiragana</li>
-                    <li class="list-group-item">カ Katakana</li>
-                    <li class="list-group-item">🉐 Vocabulary</li>
-                </ul>
-            </div>
-        </div>
+  </div>
 
-        <!-- right col join box -->
-        <div class="col-md-6">
-            <div class="card bg-light">
-                <div class="card-header">
-                    Join Dokkai to Save Your Progress
-                </div>
-                <div class="card-body">
-                    <p class="card-text">
-                        Create a free account to track learning, unlock features, and review flashcards.
-                    </p>
-
-                    <a href="{{ url_for('register') }}" class="btn btn-success">Register Free</a>
-                    <a href="{{ url_for('login') }}" class="btn btn-outline-success">Login</a>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
 {% endblock %}
-

@@ -489,9 +489,34 @@ def toggle_public_activity():
 
 
 
+
 @app.route("/")
 def home():
+    if current_user.is_authenticated:
+        today = date.today()
+        last_week = today - timedelta(days=6)
+
+
+        reviewed_counts = db.session.query(
+            func.date(Flashcard.last_review),
+            func.count()
+        ).filter(
+            Flashcard.user_id == current_user.id,
+            Flashcard.last_review != None,
+            Flashcard.last_review >= last_week
+        ).group_by(func.date(Flashcard.last_review)).all()
+
+        date_labels = [(today - timedelta(days=i)).isoformat() for i in reversed(range(7))]
+        data_dict = {d: 0 for d in date_labels}
+        for d, count in reviewed_counts:
+
+            data_dict[d] = count
+
+
+        return render_template('home.html', title="Home", card_data=data_dict)
+
     return render_template('home.html', title="Home")
+
 
 
 
@@ -580,6 +605,9 @@ def export_flashcards():
         headers={"Content-Disposition": "attachment;filename=dokkai_flashcards.csv"}
     )
 
+@app.route("/kana")
+def kana():
+    return render_template("kana.html", title="Kana")
 
 
 
