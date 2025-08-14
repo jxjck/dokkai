@@ -19,18 +19,28 @@
 
   <div class="container-fluid">
     <a class="navbar-brand" href="{{ url_for('home') }}">Dokkai</a>
-    <!-- mobile menu toggle -->
+    <!--mobile menu toggle -->
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
             aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
-    <!-- nav links -->
+    <!--nav links -->
     <div class="collapse navbar-collapse" id="navbarContent">
       {% if current_user.is_authenticated %}
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item"><a class="nav-link" href="{{ url_for('flashcards') }}">Flashcards</a></li>
           <li class="nav-item"><a class="nav-link" href="{{ url_for('grammar') }}">Grammar</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('kana_guesser') }}">Kana Practice</a></li>
           <li class="nav-item"><a class="nav-link" href="{{ url_for('leaderboard') }}">Leaderboard</a></li>
+          <li class="nav-item">
+          <li class="nav-item">
+  <a class="nav-link" href="{{ url_for('how_to_use') }}">How to Use</a>
+</li>
+  <a class="nav-link" href="{{ url_for('about') }}">About</a>
+</li>
+
+
+
         </ul>
         <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
           <li class="nav-item"><a class="nav-link" href="{{ url_for('dashboard') }}">Profile</a></li>
@@ -46,16 +56,18 @@
   </div>
 </nav>
     <div class="container">
-      {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-          {% for category, message in messages %}
-            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-              {{ message }}
-              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-          {% endfor %}
-        {% endif %}
-      {% endwith %}
+
+<!--      commented bc duplicate flash messages-->
+<!--      {% with messages = get_flashed_messages(with_categories=true) %}-->
+<!--        {% if messages %}-->
+<!--          {% for category, message in messages %}-->
+<!--            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">-->
+<!--              {{ message }}-->
+<!--              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>-->
+<!--            </div>-->
+<!--          {% endfor %}-->
+<!--        {% endif %}-->
+<!--      {% endwith %}-->
 
       {% block content %}{% endblock %}
     </div>

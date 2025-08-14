@@ -3,12 +3,39 @@
 {% block content %}
 <div class="page-container">
 
-    <!-- left fixed sidebar -->
+    <!-- Left fixed sidebar -->
     <div class="action-menu">
+        <!-- New card limit form: simple number input -->
+        <div class="card bg-light mb-3 p-3">
+            <form method="POST" action="{{ url_for('update_settings') }}" id="newLimitForm">
+                <label for="newCardLimitInput" class="form-label mb-2">New cards/day</label>
+                <input
+                    type="number"
+                    class="form-control text-center"
+                    id="newCardLimitInput"
+                    name="new_cards_per_day"
+                    value="{{ current_user.new_cards_per_day or 10 }}"
+                    min="0" step="1" inputmode="numeric"
+                    aria-describedby="newCardHelp"
+                >
+                <div class="d-grid mt-2">
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+
+                {% if new_available is defined %}
+                <div class="mt-2 small">
+                    <span class="text-muted">New cards available:</span>
+                    <span class="fw-semibold">{{ new_available }}</span>
+                </div>
+                {% endif %}
+            </form>
+        </div>
+
         <a href="{{ url_for('add_flashcard') }}" class="btn btn-outline-primary mb-2">Add New Flashcard</a>
-<a href="{{ url_for('browse_flashcards') }}" class="btn btn-outline-primary mb-2">Browse Cards</a>
-<a href="{{ url_for('browse_decks') }}" class="btn btn-outline-primary mb-3">Browse Decks</a>
-        <!-- tts toggles (uses browser ones for now) -->
+        <a href="{{ url_for('browse_flashcards') }}" class="btn btn-outline-primary mb-2">Browse Cards</a>
+        <a href="{{ url_for('browse_decks') }}" class="btn btn-outline-primary mb-3">Browse Decks</a>
+
+        <!-- TTS toggles -->
         <div class="form-check form-switch mt-3">
             <input class="form-check-input" type="checkbox" id="ttsWordToggle" checked>
             <label class="form-check-label" for="ttsWordToggle">Word TTS</label>
@@ -17,45 +44,79 @@
             <input class="form-check-input" type="checkbox" id="ttsSentenceToggle" checked>
             <label class="form-check-label" for="ttsSentenceToggle">Sentence TTS</label>
         </div>
+
+        <!-- Flash message toggle -->
+        <div class="form-check form-switch mt-2">
+            <input class="form-check-input" type="checkbox" id="flashMessageToggle" checked>
+            <label class="form-check-label" for="flashMessageToggle">Show Flash Messages</label>
+        </div>
     </div>
 
     <div class="card-wrapper">
-        {% if flashcard %}
         <div class="card-content">
-            <!-- front of card -->
-            <div id="frontText" class="front-text">{{ flashcard.front | safe }}</div>
+            {% if flashcard %}
+                <div id="frontText" class="front-text">{{ flashcard.front | safe }}</div>
 
-            {% if show_answer %}
-            <hr>
-            <div class="back-text">
-                <div>{{ flashcard.reading }}</div>
-                <div>{{ flashcard.meaning }}</div>
-
-                {% if not flashcard.is_grammar and flashcard.sentence %}
-                <div id="sentenceText">{{ flashcard.sentence | striptags }}</div>
+                <!-- Reserve space for the answer to avoid layout jump -->
+                <hr>
+                {% if show_answer %}
+                    <div class="back-area">
+                        <div class="back-text">
+                            <div>{{ flashcard.reading }}</div>
+                            <div>{{ flashcard.meaning }}</div>
+                            {% if not flashcard.is_grammar and flashcard.sentence %}
+                                <div id="sentenceText">{{ flashcard.sentence | striptags }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% else %}
+                    <!-- Empty placeholder same height as .back-area -->
+                    <div class="back-area" aria-hidden="true"></div>
+                    <form method="post">
+                        <input type="hidden" name="card_id" value="{{ flashcard.id }}">
+                        <button type="submit" name="action" value="show" class="btn btn-secondary mt-3">Show Answer</button>
+                    </form>
                 {% endif %}
-            </div>
+
+                {% if show_answer %}
+                    <form method="post" class="mt-3">
+                        <input type="hidden" name="card_id" value="{{ flashcard.id }}">
+                        <button type="submit" name="rating" value="again" class="btn btn-danger">Again</button>
+                        <button type="submit" name="rating" value="good" class="btn btn-success">Good</button>
+                    </form>
+                {% endif %}
             {% else %}
-            <form method="post">
-                <button type="submit" name="action" value="show" class="btn btn-secondary mt-3">Show Answer</button>
-            </form>
+                <p>No cards due right now — great job!</p>
             {% endif %}
 
-            {% if show_answer %}
-            <form method="post" class="mt-3">
-                <button type="submit" name="rating" value="again" class="btn btn-danger">Again</button>
-                <button type="submit" name="rating" value="good" class="btn btn-success">Good</button>
-            </form>
-            {% endif %}
+            <!-- Two-number queue bar: (Review+Learning) / New -->
+            <div class="queue-bar mt-3" aria-label="Cards due (Review + Learning) / New">
+              <span class="q review" title="Due / Learning">{{ combined_due }}</span>
+              <span class="sep">/</span>
+              <span class="q new" title="New">{{ new_due }}</span>
+            </div>
+        </div>
 
-            <div class="queue-count mt-3">Cards left: {{ total_due }}</div>
-        </div>
-        {% else %}
-        <div class="card-content">
-            <p>No cards due right now — great job!</p>
-        </div>
+        <!-- Flash message area UNDER the card (only render if cookie says ON) -->
+        {% if request.cookies.get('show_flashes', '1') == '1' %}
+        {% with messages = get_flashed_messages(with_categories=true, category_filter=['success']) %}
+            {% if messages %}
+                <div id="flashMessageContainer" class="bottom-flash d-flex justify-content-center w-100">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} text-center py-2 px-4 small mb-0 flash-box">
+                            {% if 'Next due:' in message %}
+                                Next due: {{ message.split('Next due:')[1].strip() }}
+                            {% else %}
+                                {{ message }}
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
         {% endif %}
     </div>
+
 </div>
 
 <style>
@@ -72,14 +133,18 @@
     top: 100px;
     display: flex;
     flex-direction: column;
+    max-width: 220px;
+    gap: 10px;
+    z-index: 10;
 }
 
 .card-wrapper {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
-    min-height: 70vh;
     width: 100%;
+    min-height: 70vh;
+    position: relative;
 }
 
 .card-content {
@@ -93,79 +158,144 @@
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
 }
 
-.front-text {
-    font-size: 36px;
-    margin-bottom: 15px;
-    font-weight: bold;
+.front-text { font-size: 36px; margin-bottom: 15px; font-weight: bold; }
+
+/* Reserve answer area so the card height stays stable */
+.back-area {
+    min-height: 160px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
 }
 
-.back-text div {
-    font-size: 24px;
-    margin: 8px 0;
+.back-text div { font-size: 24px; margin: 8px 0; }
+
+/* Smaller reserve on narrow screens */
+@media (max-width: 576px) {
+  .back-area { min-height: 130px; }
 }
 
-hr {
-    border: 0;
-    height: 1px;
-    background-color: white;
-    margin: 15px 0;
-}
+hr { border: 0; height: 1px; background-color: white; margin: 15px 0; }
+.btn { margin: 5px 0; }
 
-.btn {
-    margin: 5px 0;
+/* Two-number queue bar */
+.queue-bar {
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+  gap: 10px;
+  font-weight: 700;
+  font-size: 1.2rem;
 }
+.queue-bar .q { line-height: 1; }
+.queue-bar .review { color: #90be6d; }   /* green for Due/Learning */
+.queue-bar .new { color: #8ecae6; }      /* blue for New */
+.queue-bar .sep { opacity: 0.6; font-weight: 600; }
+body.dark-mode .queue-bar .sep { opacity: 0.7; }
 
-.queue-count {
-    font-size: 16px;
-    margin-top: 15px;
+/* Under-card flash styling */
+.bottom-flash { margin-top: 16px; width: 90%; max-width: 500px; }
+.flash-box { width: 100%; border-radius: 10px; }
+
+/* Dark-mode friendly input look */
+body.dark-mode .form-control {
+    background-color: #1e1e1e;
+    color: #e0e0e0;
+    border-color: #444;
 }
+body.dark-mode .form-control::placeholder { color: #aaa; }
 </style>
 
 <script>
-  function speakText(text) {
-    if (!window.speechSynthesis) return;
+// ---------- helpers for cookie ----------
+function setCookie(name, value, days) {
+    const d = new Date();
+    d.setTime(d.getTime() + days*24*60*60*1000);
+    document.cookie = name + "=" + encodeURIComponent(value) + "; expires=" + d.toUTCString() + "; path=/; SameSite=Lax";
+}
+function getCookie(name) {
+    const k = name + "=";
+    return document.cookie.split(";").map(s => s.trim()).find(s => s.indexOf(k) === 0)?.substring(k.length) ?? null;
+}
 
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = "ja-JP";
-    utterance.rate = 0.9;
+// ---------- TTS (Word/Sentence) ----------
+function speakText(text) {
+    if (!window.speechSynthesis || !text) return;
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = "ja-JP";
+    u.rate = 0.9;
 
-    const voices = window.speechSynthesis.getVoices();
-    const japaneseVoice = voices.find(voice => voice.lang === "ja-JP");
-    if (japaneseVoice) {
-      utterance.voice = japaneseVoice;
+    const setVoice = () => {
+        const voices = window.speechSynthesis.getVoices();
+        const ja = voices.find(v => v.lang && v.lang.startsWith("ja"));
+        if (ja) u.voice = ja;
+        window.speechSynthesis.speak(u);
+    };
+
+    if (speechSynthesis.getVoices().length) {
+        setVoice();
+    } else {
+        speechSynthesis.onvoiceschanged = setVoice;
     }
+}
 
-    window.speechSynthesis.speak(utterance);
-  }
-
-  document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function () {
     const wordToggle = document.getElementById("ttsWordToggle");
     const sentenceToggle = document.getElementById("ttsSentenceToggle");
+    const flashToggle = document.getElementById("flashMessageToggle");
     const frontText = document.getElementById("frontText");
     const sentenceText = document.getElementById("sentenceText");
 
-    // restore toggle states
+    // restore toggles from localStorage
     wordToggle.checked = localStorage.getItem("ttsWordEnabled") !== "false";
     sentenceToggle.checked = localStorage.getItem("ttsSentenceEnabled") !== "false";
+    wordToggle.addEventListener("change", () => localStorage.setItem("ttsWordEnabled", wordToggle.checked));
+    sentenceToggle.addEventListener("change", () => localStorage.setItem("ttsSentenceEnabled", sentenceToggle.checked));
 
-    wordToggle.addEventListener("change", () => {
-      localStorage.setItem("ttsWordEnabled", wordToggle.checked);
+    // restore flash toggle from cookie (server also reads this)
+    const cookieVal = getCookie("show_flashes");
+    flashToggle.checked = cookieVal === null ? true : cookieVal === "1";
+
+    flashToggle.addEventListener("change", () => {
+        setCookie("show_flashes", flashToggle.checked ? "1" : "0", 365);
+        // also hide instantly without reload if messages are present
+        const container = document.getElementById("flashMessageContainer");
+        if (container) container.style.display = flashToggle.checked ? "" : "none";
     });
 
-    sentenceToggle.addEventListener("change", () => {
-      localStorage.setItem("ttsSentenceEnabled", sentenceToggle.checked);
-    });
-
+    // speak when the back is visible
     const isAnswerRevealed = {{ 'true' if show_answer else 'false' }};
-
     if (isAnswerRevealed) {
-      if (wordToggle.checked && frontText) {
-        setTimeout(() => speakText(frontText.innerText), 200);
-      }
-      if (sentenceToggle.checked && sentenceText) {
-        setTimeout(() => speakText(sentenceText.innerText), 600); // delay slightly after word
-      }
+        if (wordToggle.checked && frontText) setTimeout(() => speakText(frontText.innerText), 200);
+        if (sentenceToggle.checked && sentenceText) setTimeout(() => speakText(sentenceText.innerText), 600);
     }
-  });
+});
+
+// ---------- KEYBINDS ----------
+document.addEventListener('keydown', function (e) {
+    const tag = (e.target.tagName || '').toLowerCase();
+    if (tag === 'input' || tag === 'textarea' || e.target.isContentEditable) return;
+
+    const showBtn  = document.querySelector('button[name="action"][value="show"]');
+    const againBtn = document.querySelector('button[name="rating"][value="again"]');
+    const goodBtn  = document.querySelector('button[name="rating"][value="good"]');
+
+    if (e.code === 'Space') {
+        e.preventDefault();
+        if (showBtn) {
+            showBtn.click();
+        } else if (goodBtn) {
+            goodBtn.click();
+        }
+    }
+
+    if ((e.key && e.key.toLowerCase() === 'n') || e.code === 'ArrowLeft') {
+        if (againBtn) { e.preventDefault(); againBtn.click(); }
+    }
+
+    if ((e.key && e.key.toLowerCase() === 'm') || e.code === 'ArrowRight') {
+        if (goodBtn) { e.preventDefault(); goodBtn.click(); }
+    }
+});
 </script>
 {% endblock %}

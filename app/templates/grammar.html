@@ -1,1025 +1,1031 @@
 {% extends "base.html" %}
 
 {% block content %}
+<!-- Jump to Lesson Buttons -->
+<div class="mb-4">
+  <h5>Jump to Lesson</h5>
+  <div class="d-flex flex-wrap gap-2">
+    {% for i in range(1, 13) %}
+      <a href="#lesson{{ i }}" class="btn btn-sm btn-outline-primary">{{ i }}</a>
+    {% endfor %}
+  </div>
+</div>
+
+
 <div class="container mt-5">
-  <h2 class="mb-4">Grammar Lessons</h2>
+  <h2 class="mb-4">Basic Grammar Course (with flashcard integration!)</h2>
 
-  <div class="accordion" id="grammarAccordion">
+ <!-- lesson 1 -->
+<section class="mb-5" id="lesson1">
+  <h3 class="h5 mb-3">Lesson 1: State of Being – だ and です</h3>
 
-    <!-- lesson1 -->
-    <div class="accordion-item">
-      <h2 class="accordion-header" id="headingOne">
-        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne"
-          aria-expanded="false" aria-controls="collapseOne">
-          Lesson 1: State of Being – だ and です
-        </button>
-      </h2>
-      <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne"
-        data-bs-parent="#grammarAccordion">
-        <div class="accordion-body">
-          <p>In Japanese, <strong>だ</strong> and <strong>です</strong> express what something is. These are called
-            <em>copulas</em> — linking words like “is” or “are.”</p>
+  <p>In Japanese, <strong>だ</strong> and <strong>です</strong> express what something is. These are called
+    <em>copulas</em> that link words like “is” or “are.”</p>
 
-          <ul>
-            <li><strong>だ</strong> – plain form</li>
-            <li><strong>です</strong> – polite form</li>
-          </ul>
+  <ul>
+    <li><strong>だ</strong> – plain form</li>
+    <li><strong>です</strong> – polite form</li>
+  </ul>
 
-          <p>The copula comes <em>after</em> the thing being described:</p>
-          <ul class="list-unstyled">
-            <li>
-              これは本だ。<em> (This is a book.)</em>
-              <form method="POST" action="{{ url_for('add_grammar_card') }}" class="d-inline ms-2">
-                <input type="hidden" name="front" value='だ<br>これは本だ。'>
-                <input type="hidden" name="back" value="Plain copula だ expresses identity or state. Informal.">
-                <input type="hidden" name="reading" value="">
-                <input type="hidden" name="meaning" value="Copula (plain)">
-                <input type="hidden" name="sentence" value="これは本<mark>だ</mark>。This is a book.">
-                <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
-              </form>
-            </li>
-            <li>
-              あの人は先生です。<em> (That person is a teacher.)</em>
-              <form method="POST" action="{{ url_for('add_grammar_card') }}" class="d-inline ms-2">
-                <input type="hidden" name="front" value='です<br>あの人は先生です。'>
-                <input type="hidden" name="back" value="Polite copula です used for formal statements.">
-                <input type="hidden" name="reading" value="">
-                <input type="hidden" name="meaning" value="Copula (polite)">
-                <input type="hidden" name="sentence" value="あの人は先生<mark>です</mark>。That person is a teacher.">
-                <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
-              </form>
-            </li>
-          </ul>
+  <p>The copula comes <em>after</em> the thing being described:</p>
+  <ul class="list-unstyled">
+    <li>
+      これは本だ。<em> (This is a book.)</em>
+      <form method="POST" action="{{ url_for('add_grammar_card') }}" class="d-inline ms-2">
+        <input type="hidden" name="front" value='だ<br>これは本だ。'>
+        <input type="hidden" name="back" value="Plain copula だ expresses identity or state. Informal.">
+        <input type="hidden" name="reading" value="">
+        <input type="hidden" name="meaning" value="Copula (plain)">
+        <input type="hidden" name="sentence" value="これは本<mark>だ</mark>。This is a book.">
+        <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
+      </form>
+    </li>
+    <li>
+      あの人は先生です。<em> (That person is a teacher.)</em>
+      <form method="POST" action="{{ url_for('add_grammar_card') }}" class="d-inline ms-2">
+        <input type="hidden" name="front" value='です<br>あの人は先生です。'>
+        <input type="hidden" name="back" value="Polite copula です used for formal statements.">
+        <input type="hidden" name="reading" value="">
+        <input type="hidden" name="meaning" value="Copula (polite)">
+        <input type="hidden" name="sentence" value="あの人は先生<mark>です</mark>。That person is a teacher.">
+        <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
+      </form>
+    </li>
+  </ul>
 
-          <h5 class="mt-4">Tense: Present and Past</h5>
-          <p>Japanese uses two main tenses:</p>
-          <ul>
-            <li><strong>Simple (non-past)</strong> – present or future</li>
-            <li><strong>Past</strong> – completed actions or states</li>
-          </ul>
+  <h5 class="mt-4">Tense: Present and Past</h5>
+  <p>Japanese uses two main tenses:</p>
+  <ul>
+    <li><strong>Simple (non-past)</strong> – present or future</li>
+    <li><strong>Past</strong> – completed actions or states</li>
+  </ul>
 
-          <table class="table table-bordered w-auto">
-            <thead>
-              <tr>
-                <th>Form</th>
-                <th>Plain</th>
-                <th>Polite</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Present</td>
-                <td>だ</td>
-                <td>です</td>
-              </tr>
-              <tr>
-                <td>Past</td>
-                <td>だった</td>
-                <td>でした</td>
-              </tr>
-            </tbody>
-          </table>
+  <p><strong>Forms:</strong></p>
+  <ul>
+    <li>Present – plain: だ | polite: です</li>
+    <li>Past – plain: だった | polite: でした</li>
+  </ul>
 
-          <p>Example sentences:</p>
-          <ul class="list-unstyled">
-            <li>
-              昨日は雨だった。<em> (It was rainy yesterday.)</em>
-              <form method="POST" action="{{ url_for('add_grammar_card') }}" class="d-inline ms-2">
-                <input type="hidden" name="front" value='だった<br>昨日は雨だった。'>
-                <input type="hidden" name="back" value="だった is the plain past form of だ. Used to describe past identity or state.">
-                <input type="hidden" name="reading" value="">
-                <input type="hidden" name="meaning" value="Copula (plain past)">
-                <input type="hidden" name="sentence" value="昨日は雨<mark>だった</mark>。It was rainy yesterday.">
-                <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
-              </form>
-            </li>
-            <li>
-              それは問題でした。<em> (That was a problem.)</em>
-              <form method="POST" action="{{ url_for('add_grammar_card') }}" class="d-inline ms-2">
-                <input type="hidden" name="front" value='でした<br>それは問題でした。'>
-                <input type="hidden" name="back" value="でした is the polite past form of です. Used to formally describe something in the past.">
-                <input type="hidden" name="reading" value="">
-                <input type="hidden" name="meaning" value="Copula (polite past)">
-                <input type="hidden" name="sentence" value="それは問題<mark>でした</mark>。That was a problem.">
-                <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
-              </form>
-            </li>
-          </ul>
+  <p>Example sentences:</p>
+  <ul class="list-unstyled">
+    <li>
+      昨日は雨だった。<em> (It was rainy yesterday.)</em>
+      <form method="POST" action="{{ url_for('add_grammar_card') }}" class="d-inline ms-2">
+        <input type="hidden" name="front" value='だった<br>昨日は雨だった。'>
+        <input type="hidden" name="back" value="だった is the plain past form of だ. Used to describe past identity or state.">
+        <input type="hidden" name="reading" value="">
+        <input type="hidden" name="meaning" value="Copula (plain past)">
+        <input type="hidden" name="sentence" value="昨日は雨<mark>だった</mark>。It was rainy yesterday.">
+        <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
+      </form>
+    </li>
+    <li>
+      それは問題でした。<em> (That was a problem.)</em>
+      <form method="POST" action="{{ url_for('add_grammar_card') }}" class="d-inline ms-2">
+        <input type="hidden" name="front" value='でした<br>それは問題でした。'>
+        <input type="hidden" name="back" value="でした is the polite past form of です. Used to formally describe something in the past.">
+        <input type="hidden" name="reading" value="">
+        <input type="hidden" name="meaning" value="Copula (polite past)">
+        <input type="hidden" name="sentence" value="それは問題<mark>でした</mark>。That was a problem.">
+        <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
+      </form>
+    </li>
+  </ul>
 
-          <p class="mt-3">Japanese doesn’t have a distinct future tense — the non-past form is used instead, with meaning depending on context.</p>
-        </div>
+  <p class="mt-3">Japanese doesn’t have a distinct future tense as the non-past form is used instead, with meaning depending on context.</p>
+</section>
+
+
+  <!-- lesson 2 -->
+  <section class="mb-5" id="lesson2">
+    <h3 class="h5 mb-3">Lesson 2: Nouns and Pronouns</h3>
+
+    <p>Japanese nouns don’t change for plural, gender, or case. Some suffixes indicate groups, but there’s no true plural form like English.</p>
+
+    <ul>
+      <li>達（たち） is a group suffix, used with people or animals</li>
+      <li>私たち（わたしたち） – us</li>
+      <li>ジムたち – Jim and crew</li>
+    </ul>
+
+    <p>Japanese has many personal pronouns. These often include nuance (gender, formality):</p>
+    <ul>
+      <li>私（わたし）– me (neutral)</li>
+      <li>僕（ぼく）– me (polite/casual, male)</li>
+      <li>俺（おれ）– me (casual, male)</li>
+      <li>あたし – me (casual, feminine)</li>
+      <li>あなた – you</li>
+      <li>彼（かれ）– him</li>
+      <li>彼女（かのじょ）– her</li>
+    </ul>
+
+    <p>Examples:</p>
+    <ul class="list-unstyled">
+      <li>
+        僕たちは学生です。<em> (We are students.)</em>
+        <form method="POST" action="{{ url_for('add_grammar_card') }}" class="d-inline ms-2">
+          <input type="hidden" name="front" value='僕たち<br>僕たちは学生です。'>
+          <input type="hidden" name="back" value="達 (たち) adds group meaning. Here, 僕たち = we.">
+          <input type="hidden" name="reading" value="">
+          <input type="hidden" name="meaning" value="Pronoun suffix (group)">
+          <input type="hidden" name="sentence" value="<mark>僕たち</mark>は学生です。We are students.">
+          <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
+        </form>
+      </li>
+      <li>
+        あたしは会社員です。<em> (I’m an office worker.)</em>
+        <form method="POST" action="{{ url_for('add_grammar_card') }}" class="d-inline ms-2">
+          <input type="hidden" name="front" value='あたし<br>あたしは会社員です。'>
+          <input type="hidden" name="back" value="Casual feminine pronoun meaning I.">
+          <input type="hidden" name="reading" value="">
+          <input type="hidden" name="meaning" value="Personal pronoun">
+          <input type="hidden" name="sentence" value="<mark>あたし</mark>は会社員です。I’m an office worker.">
+          <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
+        </form>
+      </li>
+    </ul>
+
+    <h5 class="mt-4">Compound Words</h5>
+    <ul>
+      <li>町（まち）– town</li>
+      <li>中（なか）– inside</li>
+      <li>町中（まちなか）– downtown</li>
+    </ul>
+
+    <h5 class="mt-4">Suffix Example</h5>
+    <p>者（しゃ） is a suffix meaning “person.” It can’t stand alone in this usage:</p>
+    <ul>
+      <li>研究（けんきゅう）– research</li>
+      <li>研究者（けんきゅうしゃ）– researcher</li>
+    </ul>
+
+    <p class="mt-3">Note: kanji readings can change in compounds. Example: 昨日は normally read きのう, but it can vary depending on context or usage.</p>
+  </section>
+
+  <!-- lesson 3 -->
+  <section class="mb-5" id="lesson3">
+    <h3 class="h5 mb-3">Lesson 3: Particles & case</h3>
+
+    <p>Particles mark what role words play in a sentence. They go after the word they mark. Japanese doesn't rely on word order like English. Particles handle the grammar.</p>
+
+    <p><b>が</b> marks the subject. <b>を</b> marks the direct object. <b>は</b> marks the topic (what we're talking about now).</p>
+
+    <div class="d-flex align-items-start mb-3">
+      <div>
+        <p class="mb-0"><b>ケンがケーキを食べた</b></p>
+        <p class="mb-0">Ken ate cake</p>
       </div>
+      <form method="POST" action="{{ url_for('add_grammar_card') }}" class="ms-3">
+        <input type="hidden" name="front" value='が<br>ケンがケーキを食べた'>
+        <input type="hidden" name="back" value="が marks the subject and を marks the object. This means 'Ken ate cake'.">
+        <input type="hidden" name="reading" value="">
+        <input type="hidden" name="meaning" value="Particle (subject/object)">
+        <input type="hidden" name="sentence" value="ケン<mark>が</mark>ケーキ<mark>を</mark>食べた。Ken ate cake.">
+        <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
+      </form>
     </div>
 
-
-
-    <!-- lesson 2-->
-    <div class="accordion-item">
-      <h2 class="accordion-header" id="headingTwo">
-        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo"
-          aria-expanded="false" aria-controls="collapseTwo">
-          Lesson 2: Nouns and Pronouns
-        </button>
-      </h2>
-      <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo"
-        data-bs-parent="#grammarAccordion">
-        <div class="accordion-body">
-          <p>Japanese nouns don’t change for plural, gender, or case. Some suffixes indicate groups, but there’s no true plural form like English.</p>
-
-          <ul>
-            <li>達（たち） — group suffix, used with people or animals</li>
-            <li>私たち（わたしたち） – us</li>
-            <li>ジムたち – Jim and crew</li>
-          </ul>
-
-          <p>Japanese has many personal pronouns. These often include nuance (gender, formality):</p>
-          <ul>
-            <li>私（わたし）– me (neutral)</li>
-            <li>僕（ぼく）– me (polite/casual, male)</li>
-            <li>俺（おれ）– me (casual, male)</li>
-            <li>あたし – me (casual, feminine)</li>
-            <li>あなた – you</li>
-            <li>彼（かれ）– him</li>
-            <li>彼女（かのじょ）– her</li>
-          </ul>
-
-          <p>Examples:</p>
-          <ul class="list-unstyled">
-            <li>
-              僕たちは学生です。<em> (We are students.)</em>
-              <form method="POST" action="{{ url_for('add_grammar_card') }}" class="d-inline ms-2">
-                <input type="hidden" name="front" value='僕たち<br>僕たちは学生です。'>
-                <input type="hidden" name="back" value="達 (たち) adds group meaning. Here, 僕たち = we.">
-                <input type="hidden" name="reading" value="">
-                <input type="hidden" name="meaning" value="Pronoun suffix (group)">
-                <input type="hidden" name="sentence" value="<mark>僕たち</mark>は学生です。We are students.">
-                <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
-              </form>
-            </li>
-            <li>
-              あたしは会社員です。<em> (I’m an office worker.)</em>
-              <form method="POST" action="{{ url_for('add_grammar_card') }}" class="d-inline ms-2">
-                <input type="hidden" name="front" value='あたし<br>あたしは会社員です。'>
-                <input type="hidden" name="back" value="Casual feminine pronoun meaning I.">
-                <input type="hidden" name="reading" value="">
-                <input type="hidden" name="meaning" value="Personal pronoun">
-                <input type="hidden" name="sentence" value="<mark>あたし</mark>は会社員です。I’m an office worker.">
-                <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
-              </form>
-            </li>
-          </ul>
-
-          <h5 class="mt-4">Compound Words</h5>
-          <p>Japanese uses compound words like English:</p>
-          <ul>
-            <li>町（まち）– town</li>
-            <li>中（なか）– inside</li>
-            <li>町中（まちなか）– downtown</li>
-          </ul>
-
-          <h5 class="mt-4">Suffix Example</h5>
-          <p>者（しゃ） is a suffix meaning “person.” It can’t stand alone in this usage:</p>
-          <ul>
-            <li>研究（けんきゅう）– research</li>
-            <li>研究者（けんきゅうしゃ）– researcher</li>
-          </ul>
-
-          <p class="mt-3">Note: kanji readings can change in compounds. Example: 昨日 is normally read きのう, but it can vary depending on context or usage (like this guide's title).</p>
-        </div>
+    <div class="d-flex align-items-start mb-3">
+      <div>
+        <p class="mb-0"><b>ケーキはケンが食べた</b></p>
+        <p class="mb-0">As for the cake, Ken ate it</p>
       </div>
+      <form method="POST" action="{{ url_for('add_grammar_card') }}" class="ms-3">
+        <input type="hidden" name="front" value='は<br>ケーキはケンが食べた'>
+        <input type="hidden" name="back" value="は marks the topic, が marks the focus. This means 'Ken ate the cake (not someone else)'.">
+        <input type="hidden" name="reading" value="">
+        <input type="hidden" name="meaning" value="Particle (topic/focus)">
+        <input type="hidden" name="sentence" value="ケーキ<mark>は</mark>ケン<mark>が</mark>食べた。As for the cake, Ken ate it.">
+        <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
+      </form>
     </div>
 
-<!-- lesson 3 -->
-<div class="accordion-item">
-  <h2 class="accordion-header" id="heading3">
-    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse3" aria-expanded="false" aria-controls="collapse3">
-      Lesson 3: Particles & case
-    </button>
-  </h2>
-  <div id="collapse3" class="accordion-collapse collapse" aria-labelledby="heading3" data-bs-parent="#grammarAccordion">
-    <div class="accordion-body">
-
-      <p>Particles mark what role words play in a sentence. They go after the word they mark. Japanese doesn't rely on word order like English. Particles handle the grammar.</p>
-
-      <p><b>が</b> marks the subject. <b>を</b> marks the direct object. <b>は</b> marks the topic (what we're talking about now).</p>
-
-      <div class="d-flex align-items-start mb-3">
-        <div>
-          <p class="mb-0"><b>ケンがケーキを食べた</b></p>
-          <p class="mb-0">Ken ate cake</p>
-        </div>
-        <form method="POST" action="{{ url_for('add_grammar_card') }}" class="ms-3">
-          <input type="hidden" name="front" value='が<br>ケンがケーキを食べた'>
-          <input type="hidden" name="back" value="が marks the subject and を marks the object. This means 'Ken ate cake'.">
-          <input type="hidden" name="reading" value="">
-          <input type="hidden" name="meaning" value="Particle (subject/object)">
-          <input type="hidden" name="sentence" value="ケン<mark>が</mark>ケーキ<mark>を</mark>食べた。Ken ate cake.">
-          <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
-        </form>
+    <div class="d-flex align-items-start mb-3">
+      <div>
+        <p class="mb-0"><b>ネコが魚を食べる</b></p>
+        <p class="mb-0">The cat is eating fish</p>
       </div>
-
-      <div class="d-flex align-items-start mb-3">
-        <div>
-          <p class="mb-0"><b>ケーキはケンが食べた</b></p>
-          <p class="mb-0">As for the cake, Ken ate it</p>
-        </div>
-        <form method="POST" action="{{ url_for('add_grammar_card') }}" class="ms-3">
-          <input type="hidden" name="front" value='は<br>ケーキはケンが食べた'>
-          <input type="hidden" name="back" value="は marks the topic, が marks the focus. This means 'Ken ate the cake (not someone else)'.">
-          <input type="hidden" name="reading" value="">
-          <input type="hidden" name="meaning" value="Particle (topic/focus)">
-          <input type="hidden" name="sentence" value="ケーキ<mark>は</mark>ケン<mark>が</mark>食べた。As for the cake, Ken ate it.">
-          <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
-        </form>
-      </div>
-
-      <div class="d-flex align-items-start mb-3">
-        <div>
-          <p class="mb-0"><b>ネコが魚を食べる</b></p>
-          <p class="mb-0">The cat is eating fish</p>
-        </div>
-        <form method="POST" action="{{ url_for('add_grammar_card') }}" class="ms-3">
-          <input type="hidden" name="front" value='が<br>ネコが魚を食べる'>
-          <input type="hidden" name="back" value="が marks the subject (cat), を marks the object (fish). Emphasizes the cat is the one eating.">
-          <input type="hidden" name="reading" value="">
-          <input type="hidden" name="meaning" value="Particle (subject/object)">
-          <input type="hidden" name="sentence" value="ネコ<mark>が</mark>魚<mark>を</mark>食べる。The cat is eating fish.">
-          <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
-        </form>
-      </div>
-
-      <div class="d-flex align-items-start mb-3">
-        <div>
-          <p class="mb-0"><b>ネコは魚を食べる</b></p>
-          <p class="mb-0">Speaking of cats, they eat fish</p>
-        </div>
-        <form method="POST" action="{{ url_for('add_grammar_card') }}" class="ms-3">
-          <input type="hidden" name="front" value='は<br>ネコは魚を食べる'>
-          <input type="hidden" name="back" value="は marks the topic. General statement about cats. を marks the object.">
-          <input type="hidden" name="reading" value="">
-          <input type="hidden" name="meaning" value="Particle (topic/object)">
-          <input type="hidden" name="sentence" value="ネコ<mark>は</mark>魚<mark>を</mark>食べる。Speaking of cats, they eat fish.">
-          <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
-        </form>
-      </div>
-
-      <p>Japanese usually goes Subject → Object → Verb, but order can change to shift focus.</p>
-
+      <form method="POST" action="{{ url_for('add_grammar_card') }}" class="ms-3">
+        <input type="hidden" name="front" value='が<br>ネコが魚を食べる'>
+        <input type="hidden" name="back" value="が marks the subject (cat), を marks the object (fish). Emphasizes the cat is the one eating.">
+        <input type="hidden" name="reading" value="">
+        <input type="hidden" name="meaning" value="Particle (subject/object)">
+        <input type="hidden" name="sentence" value="ネコ<mark>が</mark>魚<mark>を</mark>食べる。The cat is eating fish.">
+        <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
+      </form>
     </div>
+
+    <div class="d-flex align-items-start mb-3">
+      <div>
+        <p class="mb-0"><b>ネコは魚を食べる</b></p>
+        <p class="mb-0">Speaking of cats, they eat fish</p>
+      </div>
+      <form method="POST" action="{{ url_for('add_grammar_card') }}" class="ms-3">
+        <input type="hidden" name="front" value='は<br>ネコは魚を食べる'>
+        <input type="hidden" name="back" value="は marks the topic. General statement about cats. を marks the object.">
+        <input type="hidden" name="reading" value="">
+        <input type="hidden" name="meaning" value="Particle (topic/object)">
+        <input type="hidden" name="sentence" value="ネコ<mark>は</mark>魚<mark>を</mark>食べる。Speaking of cats, they eat fish.">
+        <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
+      </form>
+    </div>
+
+    <p>Japanese usually goes Subject → Object → Verb, but order can change to shift focus.</p>
+  </section>
+
+  <!-- lesson 4 -->
+  <section class="mb-5" id="lesson4">
+    <h3 class="h5 mb-3">Lesson 4: の means の – possession and attributes</h3>
+
+    <p><b>の</b> links things together. It can show possession (<i>my pen</i>) or describe attributes (<i>flame sword</i>). Think of it like “of”, but the order is reversed. “Sword of flame” becomes “flame の sword”.</p>
+
+    <p>When confused, try asking “what kind of [thing]?” The answer is often what comes before の.</p>
+
+    <div class="d-flex align-items-start mb-3">
+      <div>
+        <p class="mb-0"><b>私のペン</b></p>
+        <p class="mb-0">My pen</p>
+      </div>
+      <form method="POST" action="{{ url_for('add_grammar_card') }}" class="ms-3">
+        <input type="hidden" name="front" value='の<br>私のペン'>
+        <input type="hidden" name="back" value="の shows possession. This is 'my pen'.">
+        <input type="hidden" name="reading" value="">
+        <input type="hidden" name="meaning" value="Particle (possessive)">
+        <input type="hidden" name="sentence" value="私<mark>の</mark>ペン。My pen.">
+        <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
+      </form>
+    </div>
+
+    <div class="d-flex align-items-start mb-3">
+      <div>
+        <p class="mb-0"><b>夜の海</b></p>
+        <p class="mb-0">The night sea</p>
+      </div>
+      <form method="POST" action="{{ url_for('add_grammar_card') }}" class="ms-3">
+        <input type="hidden" name="front" value='の<br>夜の海'>
+        <input type="hidden" name="back" value="の shows that 'night' is an attribute of 'sea'.">
+        <input type="hidden" name="reading" value="">
+        <input type="hidden" name="meaning" value="Particle (attributive)">
+        <input type="hidden" name="sentence" value="夜<mark>の</mark>海。The night sea.">
+        <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
+      </form>
+    </div>
+
+    <div class="d-flex align-items-start mb-3">
+      <div>
+        <p class="mb-0"><b>海の夜</b></p>
+        <p class="mb-0">Night on the sea</p>
+      </div>
+      <form method="POST" action="{{ url_for('add_grammar_card') }}" class="ms-3">
+        <input type="hidden" name="front" value='の<br>海の夜'>
+        <input type="hidden" name="back" value="の reverses the relationship. This means 'the night that happens at sea'.">
+        <input type="hidden" name="reading" value="">
+        <input type="hidden" name="meaning" value="Particle (contextual)">
+        <input type="hidden" name="sentence" value="海<mark>の</mark>夜。Night on the sea.">
+        <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
+      </form>
+    </div>
+
+    <div class="d-flex align-items-start mb-3">
+      <div>
+        <p class="mb-0"><b>私の子供のネコが多い</b></p>
+        <p class="mb-0">My kid has a lot of cats</p>
+      </div>
+      <form method="POST" action="{{ url_for('add_grammar_card') }}" class="ms-3">
+        <input type="hidden" name="front" value='の<br>私の子供のネコが多い'>
+        <input type="hidden" name="back" value="Nested の shows a chain: my child's cats.">
+        <input type="hidden" name="reading" value="">
+        <input type="hidden" name="meaning" value="Particle (nested possession)">
+        <input type="hidden" name="sentence" value="私<mark>の</mark>子供<mark>の</mark>ネコが多い。My kid has a lot of cats.">
+        <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
+      </form>
+    </div>
+
+    <p><b>Bonus: honorifics</b></p>
+    <p>Japanese names often take a suffix like さん, くん, ちゃん, or さま. These show politeness and your relationship to that person. They work like respectful name endings, not standalone titles.</p>
+  </section>
+
+  <!-- lesson 5 -->
+  <section class="mb-5" id="lesson5">
+    <h3 class="h5 mb-3">Lesson 5: Moving things with に, へ, and から</h3>
+
+    <p>These particles handle direction and source. に and へ show where something goes. から shows where something comes from.</p>
+
+    <p><b>から</b> = from<br>
+    <b>へ</b> = to/toward (motion focus)<br>
+    <b>に</b> = to/in/at (destination or indirect object)</p>
+
+    <p>に is the default for destination, but へ feels more like aiming at a direction. から can be used abstractly, not just for physical places.</p>
+
+    <div class="d-flex align-items-start mb-3">
+      <div>
+        <p class="mb-0"><b>東京へ行く</b></p>
+        <p class="mb-0">Going to Tokyo</p>
+      </div>
+      <form method="POST" action="{{ url_for('add_grammar_card') }}" class="ms-3">
+        <input type="hidden" name="front" value='へ<br>東京へ行く'>
+        <input type="hidden" name="back" value="へ indicates direction or goal. 'Going to Tokyo'.">
+        <input type="hidden" name="reading" value="">
+        <input type="hidden" name="meaning" value="Particle (direction)">
+        <input type="hidden" name="sentence" value="東京<mark>へ</mark>行く。Going to Tokyo.">
+        <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
+      </form>
+    </div>
+
+    <div class="d-flex align-items-start mb-3">
+      <div>
+        <p class="mb-0"><b>学校に来た</b></p>
+        <p class="mb-0">Came to school</p>
+      </div>
+      <form method="POST" action="{{ url_for('add_grammar_card') }}" class="ms-3">
+        <input type="hidden" name="front" value='に<br>学校に来た'>
+        <input type="hidden" name="back" value="に marks destination. 'Came to school'.">
+        <input type="hidden" name="reading" value="">
+        <input type="hidden" name="meaning" value="Particle (destination)">
+        <input type="hidden" name="sentence" value="学校<mark>に</mark>来た。Came to school.">
+        <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
+      </form>
+    </div>
+
+    <div class="d-flex align-items-start mb-3">
+      <div>
+        <p class="mb-0"><b>学校に暮らす</b></p>
+        <p class="mb-0">Live in school</p>
+      </div>
+      <form method="POST" action="{{ url_for('add_grammar_card') }}" class="ms-3">
+        <input type="hidden" name="front" value='に<br>学校に暮らす'>
+        <input type="hidden" name="back" value="に marks location. 'Live in school'.">
+        <input type="hidden" name="reading" value="">
+        <input type="hidden" name="meaning" value="Particle (location)">
+        <input type="hidden" name="sentence" value="学校<mark>に</mark>暮らす。Live in school.">
+        <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
+      </form>
+    </div>
+
+    <div class="d-flex align-items-start mb-3">
+      <div>
+        <p class="mb-0"><b>ここに来た</b></p>
+        <p class="mb-0">He came here</p>
+      </div>
+      <form method="POST" action="{{ url_for('add_grammar_card') }}" class="ms-3">
+        <input type="hidden" name="front" value='に<br>ここに来た'>
+        <input type="hidden" name="back" value="に marks destination. 'He came here'.">
+        <input type="hidden" name="reading" value="">
+        <input type="hidden" name="meaning" value="Particle (destination)">
+        <input type="hidden" name="sentence" value="ここ<mark>に</mark>来た。He came here.">
+        <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
+      </form>
+    </div>
+
+    <div class="d-flex align-items-start mb-3">
+      <div>
+        <p class="mb-0"><b>研究者になる</b></p>
+        <p class="mb-0">Becomes a researcher</p>
+      </div>
+      <form method="POST" action="{{ url_for('add_grammar_card') }}" class="ms-3">
+        <input type="hidden" name="front" value='に<br>研究者になる'>
+        <input type="hidden" name="back" value="に marks the role/result. 'Become a researcher'.">
+        <input type="hidden" name="reading" value="">
+        <input type="hidden" name="meaning" value="Particle (role/result)">
+        <input type="hidden" name="sentence" value="研究者<mark>に</mark>なる。Becomes a researcher.">
+        <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
+      </form>
+    </div>
+
+    <div class="d-flex align-items-start mb-3">
+      <div>
+        <p class="mb-0"><b>私の家から来た</b></p>
+        <p class="mb-0">Came from my house</p>
+      </div>
+      <form method="POST" action="{{ url_for('add_grammar_card') }}" class="ms-3">
+        <input type="hidden" name="front" value='から<br>私の家から来た'>
+        <input type="hidden" name="back" value="から means 'from'. Here, 'came from my house'.">
+        <input type="hidden" name="reading" value="">
+        <input type="hidden" name="meaning" value="Particle (origin)">
+        <input type="hidden" name="sentence" value="私の家<mark>から</mark>来た。Came from my house.">
+        <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- lesson 6 -->
+  <section class="mb-5" id="lesson6">
+    <h3 class="h5 mb-3">Lesson 6: What is a verb? Nothing but a miserable pile of conjugations!</h3>
+
+    <p>Japanese has two main verb types: one-form and five-form. One-form verbs always end in る and drop it when conjugating. Five-form verbs end in a u-sound (like う, つ, ぬ, etc.) and change that sound depending on the conjugation.</p>
+
+    <p>One-form verbs have a consistent stem. Five-form verbs change their final vowel depending on the form.</p>
+
+    <p>Here’s a few basic examples, using the polite ます form (which we’ll cover fully later).</p>
+
+    <div class="d-flex align-items-start mb-3">
+      <div>
+        <p class="mb-0"><b>見る → 見ます</b></p>
+        <p class="mb-0">One-form verb. Drop る, add ます.</p>
+      </div>
+      <form method="POST" action="{{ url_for('add_grammar_card') }}" class="ms-3">
+        <input type="hidden" name="front" value='見る<br>見る → 見ます'>
+        <input type="hidden" name="back" value="One-form verb: drop る and add ます. 'See' becomes 'see (polite)'">
+        <input type="hidden" name="reading" value="">
+        <input type="hidden" name="meaning" value="Verb (one-form)">
+        <input type="hidden" name="sentence" value="見る → <mark>見ます</mark>。One-form verb conjugation.">
+        <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
+      </form>
+    </div>
+
+    <div class="d-flex align-items-start mb-3">
+      <div>
+        <p class="mb-0"><b>切る → 切ります</b></p>
+        <p class="mb-0">Five-form verb ending in る</p>
+      </div>
+      <form method="POST" action="{{ url_for('add_grammar_card') }}" class="ms-3">
+        <input type="hidden" name="front" value='切る<br>切る → 切ります'>
+        <input type="hidden" name="back" value="Five-form verb ending in る. Change る to り and add ます.">
+        <input type="hidden" name="reading" value="">
+        <input type="hidden" name="meaning" value="Verb (five-form)">
+        <input type="hidden" name="sentence" value="切る → <mark>切ります</mark>。Five-form verb conjugation.">
+        <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
+      </form>
+    </div>
+
+    <div class="d-flex align-items-start mb-3">
+      <div>
+        <p class="mb-0"><b>買う → 買います</b></p>
+        <p class="mb-0">Five-form verb ending in う</p>
+      </div>
+      <form method="POST" action="{{ url_for('add_grammar_card') }}" class="ms-3">
+        <input type="hidden" name="front" value='買う<br>買う → 買います'>
+        <input type="hidden" name="back" value="Five-form verb ending in う. Change う to い and add ます.">
+        <input type="hidden" name="reading" value="">
+        <input type="hidden" name="meaning" value="Verb (five-form)">
+        <input type="hidden" name="sentence" value="買う → <mark>買います</mark>。Five-form verb conjugation.">
+        <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
+      </form>
+    </div>
+
+    <div class="d-flex align-items-start mb-3">
+      <div>
+        <p class="mb-0"><b>死ぬ → 死にます</b></p>
+        <p class="mb-0">Five-form verb ending in ぬ</p>
+      </div>
+      <form method="POST" action="{{ url_for('add_grammar_card') }}" class="ms-3">
+        <input type="hidden" name="front" value='死ぬ<br>死ぬ → 死にます'>
+        <input type="hidden" name="back" value="Five-form verb ending in ぬ. Change ぬ to に and add ます.">
+        <input type="hidden" name="reading" value="">
+        <input type="hidden" name="meaning" value="Verb (five-form)">
+        <input type="hidden" name="sentence" value="死ぬ → <mark>死にます</mark>。Five-form verb conjugation.">
+        <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- lesson 7 -->
+  <section class="mb-5" id="lesson7">
+    <h3 class="h5 mb-3">Lesson 7: Negative verbs, ない, and past negative</h3>
+
+    <p>To negate a verb, attach ない to its stem. For one-form verbs, just drop the る and add ない. For five-form verbs, switch the final u-vowel to an a-vowel and add ない. Past negative is 〜なかった.</p>
+
+    <p>In casual speech, you can drop the final い from ない for a rougher or masculine feel.</p>
+
+    <div class="d-flex align-items-start mb-3">
+      <div>
+        <p class="mb-0"><b>食べない</b></p>
+        <p class="mb-0">Doesn’t eat</p>
+      </div>
+      <form method="POST" action="{{ url_for('add_grammar_card') }}" class="ms-3">
+        <input type="hidden" name="front" value='食べない<br>食べない'>
+        <input type="hidden" name="back" value="Negative form of one-form verb 食べる. Means 'doesn't eat'.">
+        <input type="hidden" name="reading" value="">
+        <input type="hidden" name="meaning" value="Verb (negative)">
+        <input type="hidden" name="sentence" value="<mark>食べない</mark>。Doesn't eat.">
+        <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
+      </form>
+    </div>
+
+    <div class="d-flex align-items-start mb-3">
+      <div>
+        <p class="mb-0"><b>読まない</b></p>
+        <p class="mb-0">Doesn’t read</p>
+      </div>
+      <form method="POST" action="{{ url_for('add_grammar_card') }}" class="ms-3">
+        <input type="hidden" name="front" value='読まない<br>読まない'>
+        <input type="hidden" name="back" value="Negative form of five-form verb 読む. Means 'doesn't read'.">
+        <input type="hidden" name="reading" value="">
+        <input type="hidden" name="meaning" value="Verb (negative)">
+        <input type="hidden" name="sentence" value="<mark>読まない</mark>。Doesn't read.">
+        <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
+      </form>
+    </div>
+
+    <div class="d-flex align-items-start mb-3">
+      <div>
+        <p class="mb-0"><b>切らなかった</b></p>
+        <p class="mb-0">Didn’t cut</p>
+      </div>
+      <form method="POST" action="{{ url_for('add_grammar_card') }}" class="ms-3">
+        <input type="hidden" name="front" value='切らなかった<br>切らなかった'>
+        <input type="hidden" name="back" value="Past negative of five-form verb 切る. Means 'didn't cut'.">
+        <input type="hidden" name="reading" value="">
+        <input type="hidden" name="meaning" value="Verb (past negative)">
+        <input type="hidden" name="sentence" value="<mark>切らなかった</mark>。Didn’t cut.">
+        <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
+      </form>
+    </div>
+
+    <div class="d-flex align-items-start mb-3">
+      <div>
+        <p class="mb-0"><b>飲まなかった</b></p>
+        <p class="mb-0">Didn’t drink</p>
+      </div>
+      <form method="POST" action="{{ url_for('add_grammar_card') }}" class="ms-3">
+        <input type="hidden" name="front" value='飲まなかった<br>飲まなかった'>
+        <input type="hidden" name="back" value="Past negative of five-form verb 飲む. Means 'didn’t drink'.">
+        <input type="hidden" name="reading" value="">
+        <input type="hidden" name="meaning" value="Verb (past negative)">
+        <input type="hidden" name="sentence" value="<mark>飲まなかった</mark>。Didn’t drink.">
+        <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- lesson 8 -->
+  <section class="mb-5" id="lesson8">
+    <h3 class="h5 mb-3">Lesson 8: Past tense and verb stems</h3>
+
+    <p>To form the past tense, you attach た or だ to the correct verb stem. One-form verbs are simple — drop る and add た. Five-form verbs change the final syllable and then slur into た/だ depending on the consonant. There’s a pattern, but it looks irregular.</p>
+
+    <p>The stem for the past tense is different from the negative stem. It usually swaps the final u-sound with an i-sound and fuses it with た. Like 死ぬ becomes 死んだ.</p>
+
+    <p>This slurring is just the modern form. You’ll get used to it fast with some reading and listening. Don’t worry about memorizing all the patterns right away.</p>
+
+    <div class="d-flex align-items-start mb-3">
+      <div>
+        <p class="mb-0"><b>歩いた</b></p>
+        <p class="mb-0">Walked</p>
+      </div>
+      <form method="POST" action="{{ url_for('add_grammar_card') }}" class="ms-3">
+        <input type="hidden" name="front" value='歩いた<br>歩いた'>
+        <input type="hidden" name="back" value="Past tense of 歩く. Means 'walked'.">
+        <input type="hidden" name="reading" value="">
+        <input type="hidden" name="meaning" value="Verb (past)">
+        <input type="hidden" name="sentence" value="<mark>歩いた</mark>。Walked.">
+        <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
+      </form>
+    </div>
+
+    <div class="d-flex align-items-start mb-3">
+      <div>
+        <p class="mb-0"><b>死んだ</b></p>
+        <p class="mb-0">Died</p>
+      </div>
+      <form method="POST" action="{{ url_for('add_grammar_card') }}" class="ms-3">
+        <input type="hidden" name="front" value='死んだ<br>死んだ'>
+        <input type="hidden" name="back" value="Past tense of 死ぬ. Stem is 死に + slurred into ん + だ. Means 'died'.">
+        <input type="hidden" name="reading" value="">
+        <input type="hidden" name="meaning" value="Verb (past)">
+        <input type="hidden" name="sentence" value="<mark>死んだ</mark>。Died.">
+        <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
+      </form>
+    </div>
+
+    <div class="d-flex align-items-start mb-3">
+      <div>
+        <p class="mb-0"><b>見た</b></p>
+        <p class="mb-0">Saw</p>
+      </div>
+      <form method="POST" action="{{ url_for('add_grammar_card') }}" class="ms-3">
+        <input type="hidden" name="front" value='見た<br>見た'>
+        <input type="hidden" name="back" value="Past tense of one-form verb 見る. Drop る, add た. Means 'saw'.">
+        <input type="hidden" name="reading" value="">
+        <input type="hidden" name="meaning" value="Verb (past)">
+        <input type="hidden" name="sentence" value="<mark>見た</mark>。Saw.">
+        <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
+      </form>
+    </div>
+
+    <div class="d-flex align-items-start mb-3">
+      <div>
+        <p class="mb-0"><b>買った</b></p>
+        <p class="mb-0">Bought</p>
+      </div>
+      <form method="POST" action="{{ url_for('add_grammar_card') }}" class="ms-3">
+        <input type="hidden" name="front" value='買った<br>買った'>
+        <input type="hidden" name="back" value="Past tense of 買う. Stem is 買い, but slurred with た to become 買った. Means 'bought'.">
+        <input type="hidden" name="reading" value="">
+        <input type="hidden" name="meaning" value="Verb (past)">
+        <input type="hidden" name="sentence" value="<mark>買った</mark>。Bought.">
+        <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- lesson 9 -->
+  <section class="mb-5" id="lesson9">
+    <h3 class="h5 mb-3">Lesson 9: て-form, て-particle & imperatives</h3>
+
+    <p>The て-form is a super common verb form. It’s used for connecting actions, forming commands, and more. It’s built like the past tense, but ends in て instead of た. For five-form verbs it fuses in irregular ways, but you’ll pick it up with practice.</p>
+
+    <p>Example uses:</p>
+    <ul>
+      <li><b>XてY:</b> Y modifies X (not always literally).</li>
+      <li><b>Commands:</b> Just use the て-form on its own (casual).</li>
+      <li><b>てください:</b> Adds politeness (“please do X”).</li>
+      <li><b>ないでください:</b> “Please don’t X”.</li>
+      <li><b>て-particle:</b> Chains statements together (like "and").</li>
+    </ul>
+
+    <p>Also covered: the true imperative (formal/rude command), like 見ろ or 買え. One-form verbs take ろ. Five-form verbs take the e-row ending. It’s pretty aggressive.</p>
+
+    <div class="d-flex align-items-start mb-3">
+      <div>
+        <p class="mb-0"><b>聞いて！</b></p>
+        <p class="mb-0">Listen!</p>
+      </div>
+      <form method="POST" action="{{ url_for('add_grammar_card') }}" class="ms-3">
+        <input type="hidden" name="front" value='聞いて<br>聞いて！'>
+        <input type="hidden" name="back" value="て-form of 聞く used as a command. Means 'listen!'.">
+        <input type="hidden" name="reading" value="">
+        <input type="hidden" name="meaning" value="Verb (て-form command)">
+        <input type="hidden" name="sentence" value="<mark>聞いて</mark>！Listen!">
+        <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
+      </form>
+    </div>
+
+    <div class="d-flex align-items-start mb-3">
+      <div>
+        <p class="mb-0"><b>食べないでください</b></p>
+        <p class="mb-0">Please don't eat.</p>
+      </div>
+      <form method="POST" action="{{ url_for('add_grammar_card') }}" class="ms-3">
+        <input type="hidden" name="front" value='食べないで<br>食べないでください'>
+        <input type="hidden" name="back" value="Negative て-form + ください. Means 'please don’t eat'.">
+        <input type="hidden" name="reading" value="">
+        <input type="hidden" name="meaning" value="Verb (polite negative request)">
+        <input type="hidden" name="sentence" value="<mark>食べないで</mark>ください。Please don't eat.">
+        <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
+      </form>
+    </div>
+
+    <div class="d-flex align-items-start mb-3">
+      <div>
+        <p class="mb-0"><b>食べて</b></p>
+        <p class="mb-0">Eat (casual command)</p>
+      </div>
+      <form method="POST" action="{{ url_for('add_grammar_card') }}" class="ms-3">
+        <input type="hidden" name="front" value='食べて<br>食べて'>
+        <input type="hidden" name="back" value="て-form of 食べる. Casual way to say 'eat'.">
+        <input type="hidden" name="reading" value="">
+        <input type="hidden" name="meaning" value="Verb (て-form)">
+        <input type="hidden" name="sentence" value="<mark>食べて</mark>。Eat.">
+        <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
+      </form>
+    </div>
+
+    <div class="d-flex align-items-start mb-3">
+      <div>
+        <p class="mb-0"><b>見ろ！</b></p>
+        <p class="mb-0">Look!</p>
+      </div>
+      <form method="POST" action="{{ url_for('add_grammar_card') }}" class="ms-3">
+        <input type="hidden" name="front" value='見ろ<br>見ろ！'>
+        <input type="hidden" name="back" value="Imperative form of 見る. A strong/rude command meaning 'look!'.">
+        <input type="hidden" name="reading" value="">
+        <input type="hidden" name="meaning" value="Verb (imperative)">
+        <input type="hidden" name="sentence" value="<mark>見ろ</mark>！Look!">
+        <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- lesson 10 -->
+  <section class="mb-5" id="lesson10">
+    <h3 class="h5 mb-3">Lesson 10: Being more with で, では, and じゃ</h3>
+
+    <p><b>で</b> usually marks a circumstance or means. It can be a tool, a location, a way something happened. It's the contracted form of にて (old-fashioned).</p>
+
+    <p>It can also act like the て-form of だ when chaining statements together, like “he’s a dog, and…”</p>
+
+    <p><b>では</b> is a compound particle: で + は. It marks context or conditions for something else. The negative form of だ is ではない, but in casual speech, it gets contracted to <b>じゃない</b>.</p>
+
+    <p><b>じゃ</b> is just a more relaxed version of では when negating things casually. Also shows up as a dialect copula in some regions.</p>
+
+    <div class="d-flex align-items-start mb-3">
+      <div>
+        <p class="mb-0"><b>バスで来た</b></p>
+        <p class="mb-0">Came by bus</p>
+      </div>
+      <form method="POST" action="{{ url_for('add_grammar_card') }}" class="ms-3">
+        <input type="hidden" name="front" value='で<br>バスで来た'>
+        <input type="hidden" name="back" value="で marks the means/circumstance 'came by bus'.">
+        <input type="hidden" name="reading" value="">
+        <input type="hidden" name="meaning" value="Particle (means)">
+        <input type="hidden" name="sentence" value="バス<mark>で</mark>来た。Came by bus.">
+        <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
+      </form>
+    </div>
+
+    <div class="d-flex align-items-start mb-3">
+      <div>
+        <p class="mb-0"><b>私は学生じゃない</b></p>
+        <p class="mb-0">I'm not a student</p>
+      </div>
+      <form method="POST" action="{{ url_for('add_grammar_card') }}" class="ms-3">
+        <input type="hidden" name="front" value='じゃ<br>私は学生じゃない'>
+        <input type="hidden" name="back" value="じゃ is the casual negative of だ. Means 'not a student'.">
+        <input type="hidden" name="reading" value="">
+        <input type="hidden" name="meaning" value="Copula (negative, casual)">
+        <input type="hidden" name="sentence" value="私は学生<mark>じゃない</mark>。I'm not a student.">
+        <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- lesson 11 -->
+  <section class="mb-5" id="lesson11">
+    <h3 class="h5 mb-3">Lesson 11: Relative clauses and な-adjectives</h3>
+
+    <p>Relative clauses describe a noun by attaching a full sentence directly in front of it, like "the dog I saw". Just use the verb/adjective before the noun. No special grammar needed.</p>
+
+    <p>好きだった食べ物 = food I liked. You can’t use plain だ inside a relative clause, but past だった works.</p>
+
+    <p>な-adjectives need な to attach to a noun (バカな人 = a stupid person). Without the な, they act like nouns: 君が好きだ = I like you.</p>
+
+    <div class="d-flex align-items-start mb-3">
+      <div>
+        <p class="mb-0"><b>好きだったゲーム</b></p>
+        <p class="mb-0">A game I liked</p>
+      </div>
+      <form method="POST" action="{{ url_for('add_grammar_card') }}" class="ms-3">
+        <input type="hidden" name="front" value='だった<br>好きだったゲーム'>
+        <input type="hidden" name="back" value="だった is the past of だ, used here in a relative clause: 'a game I liked'.">
+        <input type="hidden" name="reading" value="">
+        <input type="hidden" name="meaning" value="Copula (past)">
+        <input type="hidden" name="sentence" value="好き<mark>だった</mark>ゲーム。A game I liked.">
+        <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
+      </form>
+    </div>
+
+    <div class="d-flex align-items-start mb-3">
+      <div>
+        <p class="mb-0"><b>大好きな人</b></p>
+        <p class="mb-0">Someone you love</p>
+      </div>
+      <form method="POST" action="{{ url_for('add_grammar_card') }}" class="ms-3">
+        <input type="hidden" name="front" value='な<br>大好きな人'>
+        <input type="hidden" name="back" value="な links a な-adjective to the noun. '大好きな人' = person you dearly love.">
+        <input type="hidden" name="reading" value="">
+        <input type="hidden" name="meaning" value="Adjective (な-type)">
+        <input type="hidden" name="sentence" value="大好き<mark>な</mark>人。Someone you love.">
+        <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- lesson 12 -->
+  <section class="mb-5" id="lesson12">
+    <h3 class="h5 mb-3">Lesson 12: Irregular verbs and basic formality</h3>
+
+    <p>Japanese only has two major irregular verbs: <b>する</b> (to do) and <b>くる</b> (to come). Their forms are all over the place, so you’ll just get used to them with exposure.</p>
+
+    <p>Polite verbs end in <b>ます</b>, which attaches to a verb stem. One-form verbs drop the る and attach it directly. Five-form verbs change the ending to an “i” sound first (行く → 行きます).</p>
+
+    <p>Don’t attach ます to です — that’s not a thing.</p>
+
+    <p>To negate ます, use <b>ません</b>. For polite past negative, just use <b>ませんでした</b>.</p>
+
+    <div class="d-flex align-items-start mb-3">
+      <div>
+        <p class="mb-0"><b>死にませんでした</b></p>
+        <p class="mb-0">Didn’t die</p>
+      </div>
+      <form method="POST" action="{{ url_for('add_grammar_card') }}" class="ms-3">
+        <input type="hidden" name="front" value='ませんでした<br>死にませんでした'>
+        <input type="hidden" name="back" value="Polite past negative of 死ぬ. Means 'didn’t die'.">
+        <input type="hidden" name="reading" value="">
+        <input type="hidden" name="meaning" value="Verb (polite past negative)">
+        <input type="hidden" name="sentence" value="<mark>死にませんでした</mark>。Didn’t die.">
+        <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
+      </form>
+    </div>
+
+    <div class="d-flex align-items-start mb-3">
+      <div>
+        <p class="mb-0"><b>します</b></p>
+        <p class="mb-0">I do / will do (polite)</p>
+      </div>
+      <form method="POST" action="{{ url_for('add_grammar_card') }}" class="ms-3">
+        <input type="hidden" name="front" value='します<br>します'>
+        <input type="hidden" name="back" value="Polite present/future of する (to do). Very common irregular verb.">
+        <input type="hidden" name="reading" value="">
+        <input type="hidden" name="meaning" value="Verb (irregular polite)">
+        <input type="hidden" name="sentence" value="<mark>します</mark>。I do / will do (polite).">
+        <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
+      </form>
+    </div>
+
+    <div class="d-flex align-items-start mb-3">
+      <div>
+        <p class="mb-0"><b>来ます</b></p>
+        <p class="mb-0">Comes (polite)</p>
+      </div>
+      <form method="POST" action="{{ url_for('add_grammar_card') }}" class="ms-3">
+        <input type="hidden" name="front" value='来ます<br>来ます'>
+        <input type="hidden" name="back" value="Polite form of 来る (to come). Irregular verb.">
+        <input type="hidden" name="reading" value="きます">
+        <input type="hidden" name="meaning" value="Verb (irregular polite)">
+        <input type="hidden" name="sentence" value="<mark>来ます</mark>。Comes (polite).">
+        <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- future development - l13 and beyond below here (or maybe on another page to
+   encapsulate this part into a sort of "part one" for grammar) -->
+
+
+
+
+
+
+<!-- AI Assistant -->
+<div id="aiBox" class="ai-box">
+  <div class="ai-header">
+    <div class="ai-title">AI grammar help (generate example sentences!)</div>
+    <div class="ai-controls">
+      <button id="aiMinBtn" class="btn btn-sm btn-outline-light">_</button>
+      <button id="aiCloseBtn" class="btn btn-sm btn-outline-light">×</button>
+    </div>
+  </div>
+
+  <div id="aiBody" class="ai-body">
+    <div class="ai-meta small text-muted mb-2">
+      Lesson: <span id="aiLessonName">auto</span>
+    </div>
+
+    <div id="aiChat" class="ai-chat"></div>
+
+    <!-- Add-to-deck form (auto-filled by JS from /grammar_assistant response) -->
+    <form id="aiAddForm" class="mt-2" method="POST" action="{{ url_for('add_grammar_card') }}">
+      <input type="hidden" name="front" id="ai_front">
+      <input type="hidden" name="back" id="ai_back">
+      <input type="hidden" name="reading" id="ai_reading">
+      <input type="hidden" name="meaning" id="ai_meaning">
+      <input type="hidden" name="sentence" id="ai_sentence">
+      <div class="d-grid">
+        <button id="aiAddBtn" class="btn btn-sm btn-success" type="submit" disabled>Add to deck</button>
+      </div>
+      <div id="aiPreview" class="small text-muted mt-1" style="display:none;"></div>
+    </form>
+
+    <form id="aiForm" class="ai-form mt-2">
+      <input id="aiInput" class="form-control form-control-sm" type="text" placeholder="Ask for examples, e.g. 'give 3 sentences with へ vs に'">
+      <div class="d-grid mt-1">
+        <button class="btn btn-sm btn-primary" type="submit">Send</button>
+      </div>
+    </form>
   </div>
 </div>
 
+</div> <!-- /container -->
+
+<style>
+.ai-box{
+  position: fixed;
+  right: 0 !important;
+  bottom: 0 !important;
+  margin: 0 !important;
+  width: 340px;
+  max-height: 65vh;
+  border-radius: 0;
+  box-shadow: none;
+  overflow: hidden;
+  background: #1e1e1e;
+  color: #fff;
+  z-index: 2000;
+  user-select: none;
+}
+.ai-header{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:8px 10px; background:#264653;
+}
+.ai-title{ font-weight:600; }
+.ai-controls .btn{ padding:2px 8px; line-height:1; }
+.ai-body{ padding:10px; background:#222; }
+.ai-chat{
+  background:#111; border-radius:8px; padding:8px;
+  height:220px; overflow:auto; font-size:0.95rem;
+}
+.ai-msg{ white-space:pre-wrap; margin:6px 0; }
+.ai-msg.user{ color:#a8dadc; }
+.ai-msg.ai{ color:#e9f5f2; }
+.ai-form input{ background:#1a1a1a; color:#fff; border-color:#333; }
+.ai-form input::placeholder{ color:#999; }
+@media (max-width: 520px){
+  .ai-box{
+    width: 100vw !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    border-radius: 0 !important;
+  }
+}
+</style>
+
+<script>
+document.getElementById('aiMinBtn').onclick = ()=>{
+  const body = document.getElementById('aiBody');
+  body.style.display = body.style.display === 'none' ? '' : 'none';
+};
+document.getElementById('aiCloseBtn').onclick = ()=>{
+  document.getElementById('aiBox').style.display='none';
+};
+
+function getActiveLesson() {
+  const sections = Array.from(document.querySelectorAll('section[id^="lesson"]'));
+  if (!sections.length) {
+    const container = document.querySelector('.container');
+    const text = container ? container.innerText.trim().slice(0, 4000) : '';
+    return {title: 'All lessons', text};
+  }
+  let best = sections[0], bestTop = Infinity;
+  sections.forEach(sec => {
+    const r = sec.getBoundingClientRect();
+    const top = Math.abs(r.top);
+    if (top < bestTop) { bestTop = top; best = sec; }
+  });
+  const titleEl = best.querySelector('h3');
+  const title = titleEl ? titleEl.textContent.trim() : 'Lesson';
+  const text = best.innerText.replace(/\s+\n/g, '\n').trim().slice(0, 4000);
+  return {title, text};
+}
+
+function updateAiLessonName(){
+  const {title} = getActiveLesson();
+  const span = document.getElementById('aiLessonName');
+  if (span) span.textContent = title;
+}
+document.addEventListener('scroll', ()=>{ updateAiLessonName(); }, {passive:true});
+document.addEventListener('DOMContentLoaded', ()=>{ updateAiLessonName(); });
+
+const chatEl = document.getElementById('aiChat');
+function addMsg(text, who){
+  const d = document.createElement('div');
+  d.className = 'ai-msg ' + (who || 'ai');
+  d.textContent = text;
+  chatEl.appendChild(d);
+  chatEl.scrollTop = chatEl.scrollHeight;
+}
+
+/* Fill the hidden Add-to-deck form from API response */
+function fillAiCard(card){
+  if(!card) return;
+  document.getElementById('ai_front').value    = card.front || '';
+  document.getElementById('ai_back').value     = card.back || '';
+  document.getElementById('ai_reading').value  = card.reading || '';
+  document.getElementById('ai_meaning').value  = card.meaning || '';
+  document.getElementById('ai_sentence').value = card.sentence || '';
+  const btn = document.getElementById('aiAddBtn');
+  btn.disabled = !(card.front && card.sentence);
+  const prev = document.getElementById('aiPreview');
+  const frontPreview = (card.front || '').replace(/<br>/g, ' — ');
+  prev.textContent = frontPreview + (card.back ? (' | ' + card.back) : '');
+  prev.style.display = 'block';
+}
+
+document.getElementById('aiForm').addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  const input = document.getElementById('aiInput');
+  const msg = input.value.trim();
+  if(!msg) return;
+  input.value = '';
+  addMsg(msg, 'user');
+
+  /* disable add button until new card comes back */
+  document.getElementById('aiAddBtn').disabled = true;
+  document.getElementById('aiPreview').style.display = 'none';
+
+  const {title, text} = getActiveLesson();
+  try{
+    const r = await fetch('{{ url_for("grammar_assistant") }}', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ message: msg, lesson_title: title, lesson_context: text })
+    });
+    const data = await r.json();
+    if(!r.ok || data.error){
+      addMsg('⚠️ ' + (data.error || 'Request failed'), 'ai');
+      return;
+    }
+    addMsg(data.reply, 'ai');
+
+    /* If backend included a card payload, wire the form */
+    if(data.card){
+      fillAiCard(data.card);
+    }
+  }catch(err){
+    addMsg('⚠️ Network error: ' + err, 'ai');
+  }
+});
+</script>
 
-
-
-
-<!-- lesson 4 -->
-<div class="accordion-item">
-  <h2 class="accordion-header" id="heading4">
-    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse4" aria-expanded="false" aria-controls="collapse4">
-      Lesson 4: の means の – possession and attributes
-    </button>
-  </h2>
-  <div id="collapse4" class="accordion-collapse collapse" aria-labelledby="heading4" data-bs-parent="#grammarAccordion">
-    <div class="accordion-body">
-
-      <p><b>の</b> links things together. It can show possession (<i>my pen</i>) or describe attributes (<i>flame sword</i>). Think of it like “of”, but the order is reversed. “Sword of flame” becomes “flame の sword”.</p>
-
-      <p>When confused, try asking “what kind of [thing]?” The answer is often what comes before の.</p>
-
-      <div class="d-flex align-items-start mb-3">
-        <div>
-          <p class="mb-0"><b>私のペン</b></p>
-          <p class="mb-0">My pen</p>
-        </div>
-        <form method="POST" action="{{ url_for('add_grammar_card') }}" class="ms-3">
-          <input type="hidden" name="front" value='の<br>私のペン'>
-          <input type="hidden" name="back" value="の shows possession. This is 'my pen'.">
-          <input type="hidden" name="reading" value="">
-          <input type="hidden" name="meaning" value="Particle (possessive)">
-          <input type="hidden" name="sentence" value="私<mark>の</mark>ペン。My pen.">
-          <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
-        </form>
-      </div>
-
-      <div class="d-flex align-items-start mb-3">
-        <div>
-          <p class="mb-0"><b>夜の海</b></p>
-          <p class="mb-0">The night sea</p>
-        </div>
-        <form method="POST" action="{{ url_for('add_grammar_card') }}" class="ms-3">
-          <input type="hidden" name="front" value='の<br>夜の海'>
-          <input type="hidden" name="back" value="の shows that 'night' is an attribute of 'sea'.">
-          <input type="hidden" name="reading" value="">
-          <input type="hidden" name="meaning" value="Particle (attributive)">
-          <input type="hidden" name="sentence" value="夜<mark>の</mark>海。The night sea.">
-          <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
-        </form>
-      </div>
-
-      <div class="d-flex align-items-start mb-3">
-        <div>
-          <p class="mb-0"><b>海の夜</b></p>
-          <p class="mb-0">Night on the sea</p>
-        </div>
-        <form method="POST" action="{{ url_for('add_grammar_card') }}" class="ms-3">
-          <input type="hidden" name="front" value='の<br>海の夜'>
-          <input type="hidden" name="back" value="の reverses the relationship. This means 'the night that happens at sea'.">
-          <input type="hidden" name="reading" value="">
-          <input type="hidden" name="meaning" value="Particle (contextual)">
-          <input type="hidden" name="sentence" value="海<mark>の</mark>夜。Night on the sea.">
-          <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
-        </form>
-      </div>
-
-      <div class="d-flex align-items-start mb-3">
-        <div>
-          <p class="mb-0"><b>私の子供のネコが多い</b></p>
-          <p class="mb-0">My kid has a lot of cats</p>
-        </div>
-        <form method="POST" action="{{ url_for('add_grammar_card') }}" class="ms-3">
-          <input type="hidden" name="front" value='の<br>私の子供のネコが多い'>
-          <input type="hidden" name="back" value="Nested の shows a chain: my child's cats.">
-          <input type="hidden" name="reading" value="">
-          <input type="hidden" name="meaning" value="Particle (nested possession)">
-          <input type="hidden" name="sentence" value="私<mark>の</mark>子供<mark>の</mark>ネコが多い。My kid has a lot of cats.">
-          <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
-        </form>
-      </div>
-
-      <p><b>Bonus: honorifics</b></p>
-      <p>Japanese names often take a suffix like さん, くん, ちゃん, or さま. These show politeness and your relationship to that person. They work like respectful name endings — not standalone titles.</p>
-
-    </div>
-  </div>
-</div>
-
-
-
-
-
-<!-- lesson 5 -->
-<div class="accordion-item">
-  <h2 class="accordion-header" id="heading5">
-    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse5" aria-expanded="false" aria-controls="collapse5">
-      Lesson 5: Moving things with に, へ, and から
-    </button>
-  </h2>
-  <div id="collapse5" class="accordion-collapse collapse" aria-labelledby="heading5" data-bs-parent="#grammarAccordion">
-    <div class="accordion-body">
-
-      <p>These particles handle direction and source. に and へ show where something goes. から shows where something comes from.</p>
-
-      <p><b>から</b> = from<br>
-      <b>へ</b> = to/toward (motion focus)<br>
-      <b>に</b> = to/in/at (destination or indirect object)</p>
-
-      <p>に is the default for destination, but へ feels more like aiming at a direction. から can be used abstractly, not just for physical places.</p>
-
-      <div class="d-flex align-items-start mb-3">
-        <div>
-          <p class="mb-0"><b>東京へ行く</b></p>
-          <p class="mb-0">Going to Tokyo</p>
-        </div>
-        <form method="POST" action="{{ url_for('add_grammar_card') }}" class="ms-3">
-          <input type="hidden" name="front" value='へ<br>東京へ行く'>
-          <input type="hidden" name="back" value="へ indicates direction or goal. 'Going to Tokyo'.">
-          <input type="hidden" name="reading" value="">
-          <input type="hidden" name="meaning" value="Particle (direction)">
-          <input type="hidden" name="sentence" value="東京<mark>へ</mark>行く。Going to Tokyo.">
-          <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
-        </form>
-      </div>
-
-      <div class="d-flex align-items-start mb-3">
-        <div>
-          <p class="mb-0"><b>学校に来た</b></p>
-          <p class="mb-0">Came to school</p>
-        </div>
-        <form method="POST" action="{{ url_for('add_grammar_card') }}" class="ms-3">
-          <input type="hidden" name="front" value='に<br>学校に来た'>
-          <input type="hidden" name="back" value="に marks destination. 'Came to school'.">
-          <input type="hidden" name="reading" value="">
-          <input type="hidden" name="meaning" value="Particle (destination)">
-          <input type="hidden" name="sentence" value="学校<mark>に</mark>来た。Came to school.">
-          <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
-        </form>
-      </div>
-
-      <div class="d-flex align-items-start mb-3">
-        <div>
-          <p class="mb-0"><b>学校に暮らす</b></p>
-          <p class="mb-0">Live in school</p>
-        </div>
-        <form method="POST" action="{{ url_for('add_grammar_card') }}" class="ms-3">
-          <input type="hidden" name="front" value='に<br>学校に暮らす'>
-          <input type="hidden" name="back" value="に marks location. 'Live in school'.">
-          <input type="hidden" name="reading" value="">
-          <input type="hidden" name="meaning" value="Particle (location)">
-          <input type="hidden" name="sentence" value="学校<mark>に</mark>暮らす。Live in school.">
-          <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
-        </form>
-      </div>
-
-      <div class="d-flex align-items-start mb-3">
-        <div>
-          <p class="mb-0"><b>ここに来た</b></p>
-          <p class="mb-0">He came here</p>
-        </div>
-        <form method="POST" action="{{ url_for('add_grammar_card') }}" class="ms-3">
-          <input type="hidden" name="front" value='に<br>ここに来た'>
-          <input type="hidden" name="back" value="に marks destination. 'He came here'.">
-          <input type="hidden" name="reading" value="">
-          <input type="hidden" name="meaning" value="Particle (destination)">
-          <input type="hidden" name="sentence" value="ここ<mark>に</mark>来た。He came here.">
-          <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
-        </form>
-      </div>
-
-      <div class="d-flex align-items-start mb-3">
-        <div>
-          <p class="mb-0"><b>研究者になる</b></p>
-          <p class="mb-0">Becomes a researcher</p>
-        </div>
-        <form method="POST" action="{{ url_for('add_grammar_card') }}" class="ms-3">
-          <input type="hidden" name="front" value='に<br>研究者になる'>
-          <input type="hidden" name="back" value="に marks the role/result. 'Become a researcher'.">
-          <input type="hidden" name="reading" value="">
-          <input type="hidden" name="meaning" value="Particle (role/result)">
-          <input type="hidden" name="sentence" value="研究者<mark>に</mark>なる。Becomes a researcher.">
-          <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
-        </form>
-      </div>
-
-      <div class="d-flex align-items-start mb-3">
-        <div>
-          <p class="mb-0"><b>私の家から来た</b></p>
-          <p class="mb-0">Came from my house</p>
-        </div>
-        <form method="POST" action="{{ url_for('add_grammar_card') }}" class="ms-3">
-          <input type="hidden" name="front" value='から<br>私の家から来た'>
-          <input type="hidden" name="back" value="から means 'from'. Here, 'came from my house'.">
-          <input type="hidden" name="reading" value="">
-          <input type="hidden" name="meaning" value="Particle (origin)">
-          <input type="hidden" name="sentence" value="私の家<mark>から</mark>来た。Came from my house.">
-          <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
-        </form>
-      </div>
-
-    </div>
-  </div>
-</div>
-
-
-
-
-
-
-
-
-<!-- lesson 6 -->
-<div class="accordion-item">
-  <h2 class="accordion-header" id="heading6">
-    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse6" aria-expanded="false" aria-controls="collapse6">
-      Lesson 6: What is a verb? Nothing but a miserable pile of conjugations!
-    </button>
-  </h2>
-  <div id="collapse6" class="accordion-collapse collapse" aria-labelledby="heading6" data-bs-parent="#grammarAccordion">
-    <div class="accordion-body">
-
-      <p>Japanese has two main verb types: one-form and five-form. One-form verbs always end in る and drop it when conjugating. Five-form verbs end in a u-sound (like う, つ, ぬ, etc.) and change that sound depending on the conjugation.</p>
-
-      <p>One-form verbs have a consistent stem. Five-form verbs change their final vowel depending on the form.</p>
-
-      <p>Here’s a few basic examples, using the polite ます form (which we’ll cover fully later).</p>
-
-      <div class="d-flex align-items-start mb-3">
-        <div>
-          <p class="mb-0"><b>見る → 見ます</b></p>
-          <p class="mb-0">One-form verb. Drop る, add ます.</p>
-        </div>
-        <form method="POST" action="{{ url_for('add_grammar_card') }}" class="ms-3">
-          <input type="hidden" name="front" value='見る<br>見る → 見ます'>
-          <input type="hidden" name="back" value="One-form verb: drop る and add ます. 'See' becomes 'see (polite)'">
-          <input type="hidden" name="reading" value="">
-          <input type="hidden" name="meaning" value="Verb (one-form)">
-          <input type="hidden" name="sentence" value="見る → <mark>見ます</mark>。One-form verb conjugation.">
-          <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
-        </form>
-      </div>
-
-      <div class="d-flex align-items-start mb-3">
-        <div>
-          <p class="mb-0"><b>切る → 切ります</b></p>
-          <p class="mb-0">Five-form verb ending in る</p>
-        </div>
-        <form method="POST" action="{{ url_for('add_grammar_card') }}" class="ms-3">
-          <input type="hidden" name="front" value='切る<br>切る → 切ります'>
-          <input type="hidden" name="back" value="Five-form verb ending in る. Change る to り and add ます.">
-          <input type="hidden" name="reading" value="">
-          <input type="hidden" name="meaning" value="Verb (five-form)">
-          <input type="hidden" name="sentence" value="切る → <mark>切ります</mark>。Five-form verb conjugation.">
-          <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
-        </form>
-      </div>
-
-      <div class="d-flex align-items-start mb-3">
-        <div>
-          <p class="mb-0"><b>買う → 買います</b></p>
-          <p class="mb-0">Five-form verb ending in う</p>
-        </div>
-        <form method="POST" action="{{ url_for('add_grammar_card') }}" class="ms-3">
-          <input type="hidden" name="front" value='買う<br>買う → 買います'>
-          <input type="hidden" name="back" value="Five-form verb ending in う. Change う to い and add ます.">
-          <input type="hidden" name="reading" value="">
-          <input type="hidden" name="meaning" value="Verb (five-form)">
-          <input type="hidden" name="sentence" value="買う → <mark>買います</mark>。Five-form verb conjugation.">
-          <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
-        </form>
-      </div>
-
-      <div class="d-flex align-items-start mb-3">
-        <div>
-          <p class="mb-0"><b>死ぬ → 死にます</b></p>
-          <p class="mb-0">Five-form verb ending in ぬ</p>
-        </div>
-        <form method="POST" action="{{ url_for('add_grammar_card') }}" class="ms-3">
-          <input type="hidden" name="front" value='死ぬ<br>死ぬ → 死にます'>
-          <input type="hidden" name="back" value="Five-form verb ending in ぬ. Change ぬ to に and add ます.">
-          <input type="hidden" name="reading" value="">
-          <input type="hidden" name="meaning" value="Verb (five-form)">
-          <input type="hidden" name="sentence" value="死ぬ → <mark>死にます</mark>。Five-form verb conjugation.">
-          <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
-        </form>
-      </div>
-
-    </div>
-  </div>
-</div>
-
-
-
-
-
-
-<!-- lesson 7 -->
-<div class="accordion-item">
-  <h2 class="accordion-header" id="heading7">
-    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse7" aria-expanded="false" aria-controls="collapse7">
-      Lesson 7: Negative verbs, ない, and past negative
-    </button>
-  </h2>
-  <div id="collapse7" class="accordion-collapse collapse" aria-labelledby="heading7" data-bs-parent="#grammarAccordion">
-    <div class="accordion-body">
-
-      <p>To negate a verb, attach ない to its stem. For one-form verbs, just drop the る and add ない. For five-form verbs, switch the final u-vowel to an a-vowel and add ない. Past negative is 〜なかった.</p>
-
-      <p>In casual speech, you can drop the final い from ない for a rougher or masculine feel.</p>
-
-      <div class="d-flex align-items-start mb-3">
-        <div>
-          <p class="mb-0"><b>食べない</b></p>
-          <p class="mb-0">Doesn’t eat</p>
-        </div>
-        <form method="POST" action="{{ url_for('add_grammar_card') }}" class="ms-3">
-          <input type="hidden" name="front" value='食べない<br>食べない'>
-          <input type="hidden" name="back" value="Negative form of one-form verb 食べる. Means 'doesn't eat'.">
-          <input type="hidden" name="reading" value="">
-          <input type="hidden" name="meaning" value="Verb (negative)">
-          <input type="hidden" name="sentence" value="<mark>食べない</mark>。Doesn't eat.">
-          <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
-        </form>
-      </div>
-
-      <div class="d-flex align-items-start mb-3">
-        <div>
-          <p class="mb-0"><b>読まない</b></p>
-          <p class="mb-0">Doesn’t read</p>
-        </div>
-        <form method="POST" action="{{ url_for('add_grammar_card') }}" class="ms-3">
-          <input type="hidden" name="front" value='読まない<br>読まない'>
-          <input type="hidden" name="back" value="Negative form of five-form verb 読む. Means 'doesn't read'.">
-          <input type="hidden" name="reading" value="">
-          <input type="hidden" name="meaning" value="Verb (negative)">
-          <input type="hidden" name="sentence" value="<mark>読まない</mark>。Doesn't read.">
-          <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
-        </form>
-      </div>
-
-      <div class="d-flex align-items-start mb-3">
-        <div>
-          <p class="mb-0"><b>切らなかった</b></p>
-          <p class="mb-0">Didn’t cut</p>
-        </div>
-        <form method="POST" action="{{ url_for('add_grammar_card') }}" class="ms-3">
-          <input type="hidden" name="front" value='切らなかった<br>切らなかった'>
-          <input type="hidden" name="back" value="Past negative of five-form verb 切る. Means 'didn't cut'.">
-          <input type="hidden" name="reading" value="">
-          <input type="hidden" name="meaning" value="Verb (past negative)">
-          <input type="hidden" name="sentence" value="<mark>切らなかった</mark>。Didn’t cut.">
-          <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
-        </form>
-      </div>
-
-      <div class="d-flex align-items-start mb-3">
-        <div>
-          <p class="mb-0"><b>飲まなかった</b></p>
-          <p class="mb-0">Didn’t drink</p>
-        </div>
-        <form method="POST" action="{{ url_for('add_grammar_card') }}" class="ms-3">
-          <input type="hidden" name="front" value='飲まなかった<br>飲まなかった'>
-          <input type="hidden" name="back" value="Past negative of five-form verb 飲む. Means 'didn’t drink'.">
-          <input type="hidden" name="reading" value="">
-          <input type="hidden" name="meaning" value="Verb (past negative)">
-          <input type="hidden" name="sentence" value="<mark>飲まなかった</mark>。Didn’t drink.">
-          <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
-        </form>
-      </div>
-
-    </div>
-  </div>
-</div>
-
-
-
-
-
-
-<!-- lesson 8 -->
-<div class="accordion-item">
-  <h2 class="accordion-header" id="heading8">
-    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse8" aria-expanded="false" aria-controls="collapse8">
-      Lesson 8: Past tense and verb stems
-    </button>
-  </h2>
-  <div id="collapse8" class="accordion-collapse collapse" aria-labelledby="heading8" data-bs-parent="#grammarAccordion">
-    <div class="accordion-body">
-
-      <p>To form the past tense, you attach た or だ to the correct verb stem. One-form verbs are simple — drop る and add た. Five-form verbs change the final syllable and then slur into た/だ depending on the consonant. There’s a pattern, but it looks irregular.</p>
-
-      <p>The stem for the past tense is different from the negative stem. It usually swaps the final u-sound with an i-sound and fuses it with た. Like 死ぬ becomes 死んだ.</p>
-
-      <p>This slurring is just the modern form. You’ll get used to it fast with some reading and listening. Don’t worry about memorizing all the patterns right away.</p>
-
-      <div class="d-flex align-items-start mb-3">
-        <div>
-          <p class="mb-0"><b>歩いた</b></p>
-          <p class="mb-0">Walked</p>
-        </div>
-        <form method="POST" action="{{ url_for('add_grammar_card') }}" class="ms-3">
-          <input type="hidden" name="front" value='歩いた<br>歩いた'>
-          <input type="hidden" name="back" value="Past tense of 歩く. Means 'walked'.">
-          <input type="hidden" name="reading" value="">
-          <input type="hidden" name="meaning" value="Verb (past)">
-          <input type="hidden" name="sentence" value="<mark>歩いた</mark>。Walked.">
-          <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
-        </form>
-      </div>
-
-      <div class="d-flex align-items-start mb-3">
-        <div>
-          <p class="mb-0"><b>死んだ</b></p>
-          <p class="mb-0">Died</p>
-        </div>
-        <form method="POST" action="{{ url_for('add_grammar_card') }}" class="ms-3">
-          <input type="hidden" name="front" value='死んだ<br>死んだ'>
-          <input type="hidden" name="back" value="Past tense of 死ぬ. Stem is 死に + slurred into ん + だ. Means 'died'.">
-          <input type="hidden" name="reading" value="">
-          <input type="hidden" name="meaning" value="Verb (past)">
-          <input type="hidden" name="sentence" value="<mark>死んだ</mark>。Died.">
-          <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
-        </form>
-      </div>
-
-      <div class="d-flex align-items-start mb-3">
-        <div>
-          <p class="mb-0"><b>見た</b></p>
-          <p class="mb-0">Saw</p>
-        </div>
-        <form method="POST" action="{{ url_for('add_grammar_card') }}" class="ms-3">
-          <input type="hidden" name="front" value='見た<br>見た'>
-          <input type="hidden" name="back" value="Past tense of one-form verb 見る. Drop る, add た. Means 'saw'.">
-          <input type="hidden" name="reading" value="">
-          <input type="hidden" name="meaning" value="Verb (past)">
-          <input type="hidden" name="sentence" value="<mark>見た</mark>。Saw.">
-          <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
-        </form>
-      </div>
-
-      <div class="d-flex align-items-start mb-3">
-        <div>
-          <p class="mb-0"><b>買った</b></p>
-          <p class="mb-0">Bought</p>
-        </div>
-        <form method="POST" action="{{ url_for('add_grammar_card') }}" class="ms-3">
-          <input type="hidden" name="front" value='買った<br>買った'>
-          <input type="hidden" name="back" value="Past tense of 買う. Stem is 買い, but slurred with た to become 買った. Means 'bought'.">
-          <input type="hidden" name="reading" value="">
-          <input type="hidden" name="meaning" value="Verb (past)">
-          <input type="hidden" name="sentence" value="<mark>買った</mark>。Bought.">
-          <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
-        </form>
-      </div>
-
-    </div>
-  </div>
-</div>
-
-
-
-
-
-
-<!-- lesson 9 -->
-<div class="accordion-item">
-  <h2 class="accordion-header" id="heading9">
-    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse9" aria-expanded="false" aria-controls="collapse9">
-      Lesson 9: て-form, て-particle & imperatives
-    </button>
-  </h2>
-  <div id="collapse9" class="accordion-collapse collapse" aria-labelledby="heading9" data-bs-parent="#grammarAccordion">
-    <div class="accordion-body">
-
-      <p>The て-form is a super common verb form. It’s used for connecting actions, forming commands, and more. It’s built like the past tense, but ends in て instead of た. For five-form verbs it fuses in irregular ways, but you’ll pick it up with practice.</p>
-
-      <p>Example uses:</p>
-      <ul>
-        <li><b>XてY:</b> Y modifies X (not always literally).</li>
-        <li><b>Commands:</b> Just use the て-form on its own (casual).</li>
-        <li><b>てください:</b> Adds politeness (“please do X”).</li>
-        <li><b>ないでください:</b> “Please don’t X”.</li>
-        <li><b>て-particle:</b> Chains statements together (like "and").</li>
-      </ul>
-
-      <p>Also covered: the true imperative (formal/rude command), like 見ろ or 買え. One-form verbs take ろ. Five-form verbs take the e-row ending. It’s pretty aggressive.</p>
-
-      <!-- example 1 -->
-      <div class="d-flex align-items-start mb-3">
-        <div>
-          <p class="mb-0"><b>聞いて！</b></p>
-          <p class="mb-0">Listen!</p>
-        </div>
-        <form method="POST" action="{{ url_for('add_grammar_card') }}" class="ms-3">
-          <input type="hidden" name="front" value='聞いて<br>聞いて！'>
-          <input type="hidden" name="back" value="て-form of 聞く used as a command. Means 'listen!'.">
-          <input type="hidden" name="reading" value="">
-          <input type="hidden" name="meaning" value="Verb (て-form command)">
-          <input type="hidden" name="sentence" value="<mark>聞いて</mark>！Listen!">
-          <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
-        </form>
-      </div>
-
-      <!-- example 2 -->
-      <div class="d-flex align-items-start mb-3">
-        <div>
-          <p class="mb-0"><b>食べないでください</b></p>
-          <p class="mb-0">Please don't eat.</p>
-        </div>
-        <form method="POST" action="{{ url_for('add_grammar_card') }}" class="ms-3">
-          <input type="hidden" name="front" value='食べないで<br>食べないでください'>
-          <input type="hidden" name="back" value="Negative て-form + ください. Means 'please don’t eat'.">
-          <input type="hidden" name="reading" value="">
-          <input type="hidden" name="meaning" value="Verb (polite negative request)">
-          <input type="hidden" name="sentence" value="<mark>食べないで</mark>ください。Please don't eat.">
-          <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
-        </form>
-      </div>
-
-      <!-- example 3 -->
-      <div class="d-flex align-items-start mb-3">
-        <div>
-          <p class="mb-0"><b>食べて</b></p>
-          <p class="mb-0">Eat (casual command)</p>
-        </div>
-        <form method="POST" action="{{ url_for('add_grammar_card') }}" class="ms-3">
-          <input type="hidden" name="front" value='食べて<br>食べて'>
-          <input type="hidden" name="back" value="て-form of 食べる. Casual way to say 'eat'.">
-          <input type="hidden" name="reading" value="">
-          <input type="hidden" name="meaning" value="Verb (て-form)">
-          <input type="hidden" name="sentence" value="<mark>食べて</mark>。Eat.">
-          <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
-        </form>
-      </div>
-
-      <!-- example 4 -->
-      <div class="d-flex align-items-start mb-3">
-        <div>
-          <p class="mb-0"><b>見ろ！</b></p>
-          <p class="mb-0">Look!</p>
-        </div>
-        <form method="POST" action="{{ url_for('add_grammar_card') }}" class="ms-3">
-          <input type="hidden" name="front" value='見ろ<br>見ろ！'>
-          <input type="hidden" name="back" value="Imperative form of 見る. A strong/rude command meaning 'look!'.">
-          <input type="hidden" name="reading" value="">
-          <input type="hidden" name="meaning" value="Verb (imperative)">
-          <input type="hidden" name="sentence" value="<mark>見ろ</mark>！Look!">
-          <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
-        </form>
-      </div>
-
-    </div>
-  </div>
-</div>
-
-
-
-
-
-
-
-<!-- lesson 10 -->
-<div class="accordion-item">
-  <h2 class="accordion-header" id="heading10">
-    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse10" aria-expanded="false" aria-controls="collapse10">
-      Lesson 10: Being more with で, では, and じゃ
-    </button>
-  </h2>
-  <div id="collapse10" class="accordion-collapse collapse" aria-labelledby="heading10" data-bs-parent="#grammarAccordion">
-    <div class="accordion-body">
-
-      <p><b>で</b> usually marks a circumstance or means. It can be a tool, a location, a way something happened. It's the contracted form of にて (old-fashioned).</p>
-
-      <p>It can also act like the て-form of だ when chaining statements together, like “he’s a dog, and…”</p>
-
-      <p><b>では</b> is a compound particle: で + は. It marks context or conditions for something else. The negative form of だ is ではない, but in casual speech, it gets contracted to <b>じゃない</b>.</p>
-
-      <p><b>じゃ</b> is just a more relaxed version of では when negating things casually. Also shows up as a dialect copula in some regions.</p>
-
-      <!-- example 1 -->
-      <div class="d-flex align-items-start mb-3">
-        <div>
-          <p class="mb-0"><b>バスで来た</b></p>
-          <p class="mb-0">Came by bus</p>
-        </div>
-        <form method="POST" action="{{ url_for('add_grammar_card') }}" class="ms-3">
-          <input type="hidden" name="front" value='で<br>バスで来た'>
-          <input type="hidden" name="back" value="で marks the means/circumstance — 'came by bus'.">
-          <input type="hidden" name="reading" value="">
-          <input type="hidden" name="meaning" value="Particle (means)">
-          <input type="hidden" name="sentence" value="バス<mark>で</mark>来た。Came by bus.">
-          <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
-        </form>
-      </div>
-
-      <!-- example 2 -->
-      <div class="d-flex align-items-start mb-3">
-        <div>
-          <p class="mb-0"><b>私は学生じゃない</b></p>
-          <p class="mb-0">I'm not a student</p>
-        </div>
-        <form method="POST" action="{{ url_for('add_grammar_card') }}" class="ms-3">
-          <input type="hidden" name="front" value='じゃ<br>私は学生じゃない'>
-          <input type="hidden" name="back" value="じゃ is the casual negative of だ. Means 'not a student'.">
-          <input type="hidden" name="reading" value="">
-          <input type="hidden" name="meaning" value="Copula (negative, casual)">
-          <input type="hidden" name="sentence" value="私は学生<mark>じゃない</mark>。I'm not a student.">
-          <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
-        </form>
-      </div>
-
-    </div>
-  </div>
-</div>
-
-
-
-
-
-<!-- lesson 11 -->
-<div class="accordion-item">
-  <h2 class="accordion-header" id="heading11">
-    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse11" aria-expanded="false" aria-controls="collapse11">
-      Lesson 11: Relative clauses and な-adjectives
-    </button>
-  </h2>
-  <div id="collapse11" class="accordion-collapse collapse" aria-labelledby="heading11" data-bs-parent="#grammarAccordion">
-    <div class="accordion-body">
-
-      <p>Relative clauses describe a noun by attaching a full sentence directly in front of it — like "the dog I saw". Just use the verb/adjective before the noun. No special grammar needed.</p>
-
-      <p>好きだった食べ物 = food I liked. You can’t use plain だ inside a relative clause, but past だった works.</p>
-
-      <p>な-adjectives need な to attach to a noun (バカな人 = a stupid person). Without the な, they act like nouns: 君が好きだ = I like you.</p>
-
-      <!-- example 1 -->
-      <div class="d-flex align-items-start mb-3">
-        <div>
-          <p class="mb-0"><b>好きだったゲーム</b></p>
-          <p class="mb-0">A game I liked</p>
-        </div>
-        <form method="POST" action="{{ url_for('add_grammar_card') }}" class="ms-3">
-          <input type="hidden" name="front" value='だった<br>好きだったゲーム'>
-          <input type="hidden" name="back" value="だった is the past of だ, used here in a relative clause: 'a game I liked'.">
-          <input type="hidden" name="reading" value="">
-          <input type="hidden" name="meaning" value="Copula (past)">
-          <input type="hidden" name="sentence" value="好き<mark>だった</mark>ゲーム。A game I liked.">
-          <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
-        </form>
-      </div>
-
-      <!-- example 2 -->
-      <div class="d-flex align-items-start mb-3">
-        <div>
-          <p class="mb-0"><b>大好きな人</b></p>
-          <p class="mb-0">Someone you love</p>
-        </div>
-        <form method="POST" action="{{ url_for('add_grammar_card') }}" class="ms-3">
-          <input type="hidden" name="front" value='な<br>大好きな人'>
-          <input type="hidden" name="back" value="な links a な-adjective to the noun. '大好きな人' = person you dearly love.">
-          <input type="hidden" name="reading" value="">
-          <input type="hidden" name="meaning" value="Adjective (な-type)">
-          <input type="hidden" name="sentence" value="大好き<mark>な</mark>人。Someone you love.">
-          <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
-        </form>
-      </div>
-
-    </div>
-  </div>
-</div>
-
-
-
-
-<!-- lesson 12 -->
-<div class="accordion-item">
-  <h2 class="accordion-header" id="heading12">
-    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse12" aria-expanded="false" aria-controls="collapse12">
-      Lesson 12: Irregular verbs and basic formality
-    </button>
-  </h2>
-  <div id="collapse12" class="accordion-collapse collapse" aria-labelledby="heading12" data-bs-parent="#grammarAccordion">
-    <div class="accordion-body">
-
-      <p>Japanese only has two major irregular verbs: <b>する</b> (to do) and <b>くる</b> (to come). Their forms are all over the place, so you’ll just get used to them with exposure.</p>
-
-      <p>Polite verbs end in <b>ます</b>, which attaches to a verb stem. One-form verbs drop the る and attach it directly. Five-form verbs change the ending to an “i” sound first (行く → 行きます).</p>
-
-      <p>Don’t attach ます to です — that’s not a thing.</p>
-
-      <p>To negate ます, use <b>ません</b>. For polite past negative, just use <b>ませんでした</b>.</p>
-
-      <!-- example 1 -->
-      <div class="d-flex align-items-start mb-3">
-        <div>
-          <p class="mb-0"><b>死にませんでした</b></p>
-          <p class="mb-0">Didn’t die</p>
-        </div>
-        <form method="POST" action="{{ url_for('add_grammar_card') }}" class="ms-3">
-          <input type="hidden" name="front" value='ませんでした<br>死にませんでした'>
-          <input type="hidden" name="back" value="Polite past negative of 死ぬ. Means 'didn’t die'.">
-          <input type="hidden" name="reading" value="">
-          <input type="hidden" name="meaning" value="Verb (polite past negative)">
-          <input type="hidden" name="sentence" value="<mark>死にませんでした</mark>。Didn’t die.">
-          <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
-        </form>
-      </div>
-
-      <!-- example 2 -->
-      <div class="d-flex align-items-start mb-3">
-        <div>
-          <p class="mb-0"><b>します</b></p>
-          <p class="mb-0">I do / will do (polite)</p>
-        </div>
-        <form method="POST" action="{{ url_for('add_grammar_card') }}" class="ms-3">
-          <input type="hidden" name="front" value='します<br>します'>
-          <input type="hidden" name="back" value="Polite present/future of する (to do). Very common irregular verb.">
-          <input type="hidden" name="reading" value="">
-          <input type="hidden" name="meaning" value="Verb (irregular polite)">
-          <input type="hidden" name="sentence" value="<mark>します</mark>。I do / will do (polite).">
-          <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
-        </form>
-      </div>
-
-      <!-- example 3 -->
-      <div class="d-flex align-items-start mb-3">
-        <div>
-          <p class="mb-0"><b>来ます</b></p>
-          <p class="mb-0">Comes (polite)</p>
-        </div>
-        <form method="POST" action="{{ url_for('add_grammar_card') }}" class="ms-3">
-          <input type="hidden" name="front" value='来ます<br>来ます'>
-          <input type="hidden" name="back" value="Polite form of 来る (to come). Irregular verb.">
-          <input type="hidden" name="reading" value="きます">
-          <input type="hidden" name="meaning" value="Verb (irregular polite)">
-          <input type="hidden" name="sentence" value="<mark>来ます</mark>。Comes (polite).">
-          <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
-        </form>
-      </div>
-
-    </div>
-  </div>
-</div>
-
-
-<!-- future development - l13 and beyond below here (or maybe on another page to
- encapsulate this part into a sort of "part one" for grammar)-->
-
-
-
-
-
-
-
-  </div>
-</div>
 {% endblock %}
