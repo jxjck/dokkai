@@ -10,8 +10,6 @@ from dataclasses import dataclass
 from datetime import datetime
 import os
 
-
-
 @login.user_loader
 def load_user(id):
     return db.session.get(User, int(id))
@@ -29,17 +27,17 @@ class User(UserMixin, db.Model):
 
     flashcards = db.relationship('Flashcard', backref='user', lazy='dynamic')
 
-
-    # wk4 store filename for user's profile picture
+    #wk4 store filename for user's profile picture
     #edit - added default image to new profiles
     profile_picture = db.Column(db.String(255), nullable=True, default="img/default_avatar.png")
-
     #xp
     xp = db.Column(db.Integer, default=0)
-
     #public profile toggle 3aug
     show_activity_public = db.Column(db.Boolean, default=True)
+    kana_streak = db.Column(db.Integer, default=0)
 
+    ###testing thing ~ new card adjustment and settings for cards
+    new_cards_per_day = db.Column(db.Integer, default=10)
 
     @property
     def level(self):
@@ -56,8 +54,6 @@ class User(UserMixin, db.Model):
 
     def __repr__(self):
         return f'<User {self.username}>'
-
-
 
 class Flashcard(db.Model):
     __tablename__ = 'flashcards'
@@ -79,14 +75,16 @@ class Flashcard(db.Model):
     due_date = db.Column(db.DateTime, default=datetime.utcnow)
     last_review = db.Column(db.DateTime, default=None)
 
-
     #for checking and removal of tags etc
     is_grammar = db.Column(db.Boolean, default=False)
-
     #new deck id thing for custom decks
     deck_id = db.Column(db.Integer, db.ForeignKey('decks.id'), nullable=True)
 
-    def __repr__(self):
+    learning_step_index = db.Column(db.Integer, nullable=True)
+    is_lapsed_learning = db.Column(db.Boolean, default=False)
+
+
+def __repr__(self):
         return f"<Flashcard {self.front} - {self.back} (due {self.due_date})>"
 
 #aug- bonus feature- pre-made decks for users
@@ -99,12 +97,6 @@ class Deck(db.Model):
 
     # relationship to flashcards
     flashcards = db.relationship('Flashcard', backref='deck', lazy=True)
-
-
-
-
-
-
 
 
 #31st july - activity feed stuff#

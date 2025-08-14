@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card p-4">
+    <h2 class="text-center">Kana Guesser</h2>
+
+    {% if kana %}
+    <div class="text-center" style="font-size: 64px; color: #3a78e4;">{{ kana }}</div>
+    {% endif %}
+
+    {% if result %}
+    <div class="text-center mt-2 mb-2">
+        <strong>{{ result }}</strong>
+    </div>
+    {% endif %}
+
+    <form method="POST" class="text-center mt-3">
+        <div class="d-flex justify-content-center mb-3">
+            <input type="text"
+                   name="user_input"
+                   class="form-control text-center"
+                   style="width: 200px; font-size: 20px;"
+                   placeholder="Enter romaji..."
+                   autocomplete="off"
+                   autofocus>
+        </div>
+
+        <input type="hidden" name="prev_kana" value="{{ kana }}">
+        <input type="hidden" name="prev_romaji" value="{{ correct_romaji }}">
+        {% for g in selected_groups %}
+            <input type="hidden" name="selected_groups" value="{{ g }}">
+        {% endfor %}
+
+        <div class="d-flex justify-content-center mb-4 gap-2">
+            <div>
+                <div class="btn btn-sm btn-outline-primary disabled w-100">
+                    Streak: {{ session.get('kana_correct_count', 0) }}
+                </div>
+            </div>
+            <div>
+                <div class="btn btn-sm btn-outline-primary disabled w-100">
+                    Longest streak: {{ current_user.kana_streak }}
+                </div>
+            </div>
+        </div>
+
+        {% if hiragana_groups or katakana_groups %}
+        <div class="mt-4 text-start">
+            <details class="mb-3">
+                <summary><strong>Select Hiragana Group</strong></summary>
+                <div class="table-responsive mt-3">
+                    <table class="table text-center w-auto mx-auto">
+                        <tbody>
+                            <tr>
+                            {% for group in hiragana_groups %}
+                                <td>
+                                    <button type="submit" name="group" value="{{ group.value }}"
+                                        class="btn btn-sm {% if group.value in selected_groups %}btn-success{% else %}btn-outline-secondary{% endif %}">
+                                        {{ group.label|safe }}
+                                        <br><small>{{ group.romaji }}</small>
+                                    </button>
+                                </td>
+                                {% if loop.index % 5 == 0 %}
+                            </tr><tr>
+                                {% endif %}
+                            {% endfor %}
+                            </tr>
+                            <tr>
+                                <td colspan="5" class="text-center">
+                                    <button type="submit" name="group" value="hiragana_combo"
+                                        class="btn btn-sm {% if 'hiragana_combo' in selected_groups %}btn-success{% else %}btn-outline-secondary{% endif %}">
+                                        ひらがなコンボ
+                                    </button>
+                                    <div class="small mt-1 text-muted">Includes small ゃゅょ + dakuten/handakuten (e.g. きゃ, ぎゅ)</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </details>
+
+            <details>
+                <summary><strong>Select Katakana Group</strong></summary>
+                <div class="table-responsive mt-3">
+                    <table class="table text-center w-auto mx-auto">
+                        <tbody>
+                            <tr>
+                            {% for group in katakana_groups %}
+                                <td>
+                                    <button type="submit" name="group" value="{{ group.value }}"
+                                        class="btn btn-sm {% if group.value in selected_groups %}btn-success{% else %}btn-outline-secondary{% endif %}">
+                                        {{ group.label|safe }}
+                                        <br><small>{{ group.romaji }}</small>
+                                    </button>
+                                </td>
+                                {% if loop.index % 5 == 0 %}
+                            </tr><tr>
+                                {% endif %}
+                            {% endfor %}
+                            </tr>
+                            <tr>
+                                <td colspan="5" class="text-center">
+                                    <button type="submit" name="group" value="katakana_combo"
+                                        class="btn btn-sm {% if 'katakana_combo' in selected_groups %}btn-success{% else %}btn-outline-secondary{% endif %}">
+                                        カタカナコンボ
+                                    </button>
+                                    <div class="small mt-1 text-muted">Includes small ャュョ + dakuten/handakuten (e.g. キャ, ギュ)</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </details>
+        </div>
+        {% endif %}
+
+        <div class="text-center mt-5">
+    <p class="text-muted">
+        Rather use a flashcard deck?
+        <a href="{{ url_for('browse_decks') }}">Click here :)</a>.
+    </p>
+</div>
+
+    </form>
+</div>
+{% endblock %}

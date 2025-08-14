@@ -12,9 +12,11 @@
         {% if card.reading %}
           <span class="text-muted ms-2">({{ card.reading }})</span>
         {% endif %}
-        {% if card.sentence %}
-          <div class="mt-1 small text-muted">{{ card.sentence }}</div>
-        {% endif %}
+
+        {% if card.get('sentence') %}
+  <p>Example: {{ card.sentence }}</p>
+{% endif %}
+
       </li>
     {% endfor %}
   </ul>

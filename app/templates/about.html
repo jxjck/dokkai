@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}About | Dokkai{% endblock %}
+{% block content %}
+
+<h1>About Dokkai</h1>
+<hr>
+
+<p>
+Welcome to Dokkai. The aim of the platform is to be an all-in-one language platform for learners who want to be consistent and make real progress but may struggle with the overwhelming amount of tools and courses online.
+The core of the app is the flashcard system scheduled using the FSRS algorithm with everything else being built around this.
+</p>
+
+<h2>Core Features</h2>
+<ul>
+  <li>FSRS-powered flashcards for optimal review timing</li>
+  <li>Grammar lessons written to be clear and straight to the point</li>
+  <li>Pre-made decks that can be imported for study on specific topics</li>
+  <li>Kana Guesser for those just starting out</li>
+  <li>XP systems and leaderboards to boost motivation</li>
+</ul>
+
+<h2>Reccomendations</h2>
+<ul>
+  <li>Do your reviews every day when possible to keep the workload small</li>
+  <li>Start with a manageable number of new cards and gradually build up to bigger numbers</li>
+  <li>Mix flashcards with native content (reading, watching tv shows, etc.) for the best results</li>
+</ul>
+
+<p>
+  For more details on everything, check out: <a href="{{ url_for('how_to_use') }}">How to Use</a>
+</p>
+
+{% endblock %}
