@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+{% block title %}How to Use | Dokkai{% endblock %}
+{% block content %}
+
+<style>
+h1, h2 { letter-spacing: .2px; }
+hr { border-color: rgba(255,255,255,.1); margin: 1.25rem 0 1.5rem; }
+
+#flashcard-keybinds + ul strong{
+  display:inline-block;
+  padding: 2px 10px;
+  margin: 0 2px;
+  border: 1px solid rgba(255,255,255,.14);
+  border-bottom-width: 3px;
+  border-radius: 8px;
+  background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.08),
+    0 1px 1px rgba(0,0,0,.4);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  font-weight: 600;
+  letter-spacing: .2px;
+  line-height: 1.2;
+}
+
+#flashcard-keybinds + ul{
+  list-style: none;
+  padding-left: 0;
+}
+#flashcard-keybinds + ul li{
+  position: relative;
+  padding-left: 0;
+  margin: .5rem 0;
+}
+#flashcard-keybinds + ul li::before{
+  content: "•";
+  position: absolute;
+  left: -1rem;
+  opacity: .35;
+}
+
+.btn-again, .btn-good{
+  display:inline-flex; align-items:center; justify-content:center;
+  padding: .5rem 1rem;
+  border-radius: 999px;
+  border: 0;
+  font-weight: 600;
+  line-height: 1;
+  transition: transform .04s ease, filter .15s ease, box-shadow .15s ease;
+  box-shadow: 0 6px 18px rgba(0,0,0,.25);
+}
+.btn-again{
+  background: #d8344e;
+  color: #fff;
+  box-shadow: 0 10px 22px rgba(216,52,78,.35);
+}
+.btn-good{
+  background: #15a27a;
+  color: #fff;
+  box-shadow: 0 10px 22px rgba(21,162,122,.35);
+}
+.btn-again:hover, .btn-good:hover{ filter: brightness(1.06); }
+.btn-again:active, .btn-good:active{ transform: translateY(1px); }
+
+.btn-inline-again,
+.btn-inline-good {
+  display: inline-block;
+  padding: 2px 8px;
+  margin: 0 2px;
+  border-radius: 6px;
+  font-size: 0.85em;
+  font-weight: 600;
+  line-height: 1.2;
+  vertical-align: middle;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.btn-inline-again {
+  background: #d8344e;
+  color: #fff;
+}
+
+.btn-inline-good {
+  background: #15a27a;
+  color: #fff;
+}
+
+.count-soft{
+  font-weight: 700;
+  letter-spacing: .3px;
+  color: #25c08a;
+}
+.count-soft .muted{ color: rgba(255,255,255,.6); }
+
+p{ line-height: 1.7; }
+</style>
+
+<h1>How to Use:</h1>
+<p>
+The flashcard system using the FSRS algorithm is the core of the app. Everything kind of operates around this, so visiting daily and doing your reviews is the best for making consistent progress, even if on some days you don't have the time or energy to learn new content or read/watch/engage with something in your target language.
+</p>
+<hr>
+
+<h2 id="flashcard-keybinds">Flashcard Keybinds</h2>
+<ul>
+  <li><strong>Space</strong> – Show the card answer</li>
+  <li><strong>N</strong> or <strong>Arrow Left</strong> – Mark Again</li>
+  <li><strong>M</strong> or <strong>Arrow Right</strong> – Mark Good</li>
+</ul>
+<p>
+You can also of course just use the buttons on the screen if you'd rather.
+</p>
+
+<h2>Card Types</h2>
+<p>
+Two main types:
+</p>
+<ul>
+  <li><strong>Grammar cards:</strong> Focus on recalling the concept and how it operates generally in a sentence. You can add these cards through the integrated course using the buttons next to example sentences, or manually like you would with any other card.</li>
+  <li><strong>Word cards:</strong> If it's a card with kanji in it, recall the reading first and then the meaning. Grade yourself harshly on the reading and less so on the meaning. Understanding of meaning comes with reading and listening development through engaging with content in your target language. :)</li>
+</ul>
+
+<h2>New Cards Per Day</h2>
+<p>
+This sets how many brand-new cards you’ll see in a day.
+If you’re new: 5–10 is a good starting point.
+If you’re used to it: 10–20.
+Lower the number of new cards if it starts piling up too much.
+</p>
+
+<h2>Scheduling Basics</h2>
+<p>
+  Cards are scheduled with the FSRS algorithm and use "steps" when learning cards. Steps are intervals that a card is put through before it is marked as learnt and moved to the next day. For example if you mark a new card
+  <span class="btn-inline-good">Good</span>, it will move to the first step of a few minutes and so on until all of the steps have been cleared for the day.
+  If you mark a card <span class="btn-inline-again">Again</span>, the steps are reset.
+  Cards that are in review (the green number on the flashcard page) are treated differently. FSRS remembers how many times you got a card right in the past, so if you fail it despite remembering it a lot previously it doesn't completely reset it back to zero, keeping the workload light and guaranteeing efficient progress. :)
+</p>
+<p>
+  New cards go through 3 short learning steps before moving to long-term review.
+  If you forget something, FSRS will put it back through a short relearn cycle of 2 steps. Everything is handled on the backend by Dokkai though adjusting these values may be added as a feature in the future.
+</p>
+
+<h2>Grammar Course</h2>
+<p>
+The grammar course is structured in a way that will introduce you easily to the core concepts, and when you feel like you understand it enough you can add an example sentence with the concept to your flashcard deck within the app in a single click.
+  There's even an integrated AI assistant for generating sentences. If you have something you're interested in that may help you remember the concept better, use this in an example sentence!
+</p>
+
+{% endblock %}
