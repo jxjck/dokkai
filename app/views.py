@@ -651,7 +651,9 @@ def import_deck(deck_id):
     db.session.add(user_deck)
     db.session.commit()
 
-    #copy cards
+
+
+    ##cards thing
     for card in original.flashcards:
         copy = Flashcard(
             user_id=current_user.id,
