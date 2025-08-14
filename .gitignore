@@ -21,6 +21,7 @@ app/data/*.sqlite
 app/data/*.db
 app/data/*.json
 app/data/*.csv
+app/debug_utils.py
 
 uploads/
 media/
