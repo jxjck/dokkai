@@ -521,12 +521,10 @@ def grammar_assistant():
         "request": user_msg
     }
 
-    # ---- Legacy SDK call (works with openai==0.27.x) ----
     try:
         import openai
         openai.api_key = api_key
 
-        # 0.27.x predates the 4o models; use gpt-3.5-turbo here
         resp = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
             temperature=0.6,
@@ -540,7 +538,6 @@ def grammar_assistant():
     except Exception as e:
         return jsonify({"error": f"AI error: {e}"}), 500
 
-    # ---- Parse the model JSON ----
     try:
         j = json.loads(raw)
         focus = (j.get("focus_token") or "").strip()
