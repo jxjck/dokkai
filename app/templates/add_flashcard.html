@@ -2,10 +2,12 @@
 
 {% block content %}
 <div class="container mt-4">
+    <!-- Page title -->
     <h2>Add New Flashcard</h2>
-    <form method="POST">
-        {{ form.hidden_tag() }}
 
+    <!-- Flashcard creation form -->
+    <form method="POST">
+        {{ form.hidden_tag() }} <!--CSRF token-->
         <div class="form-group">
             {{ form.front.label(class="form-label") }}
             {{ form.front(class="form-control") }}
@@ -25,7 +27,6 @@
             {{ form.sentence.label(class="form-label") }}
             {{ form.sentence(class="form-control") }}
         </div>
-
         <button type="submit" class="btn btn-primary mt-3">Add Flashcard</button>
     </form>
 </div>

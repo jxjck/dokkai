@@ -16,11 +16,13 @@
                 </tr>
             </thead>
             <tbody>
+                {# loop through leaderboard data from backend #}
                 {% for user, count, rank, level in leaderboard %}
                 <tr>
                     <th scope="row">#{{ rank }}</th>
                     <td>
                         <div class="d-flex align-items-center">
+                            {# check if profile pic is default (in /static/img) or uploaded #}
                             {% set is_default = user.profile_picture.startswith('img/') %}
                             <img src="{{ url_for('static', filename=user.profile_picture) if is_default else url_for('uploaded_file', filename=user.profile_picture) }}"
                                  class="rounded-circle me-2"
@@ -28,6 +30,7 @@
                                  height="50"
                                  alt="Profile">
                             <span class="me-2">{{ user.username }}</span>
+                            {# button to view user’s public profile page #}
                             <a href="{{ url_for('public_profile', username=user.username) }}" class="btn btn-sm btn-outline-info">View Profile</a>
                         </div>
                     </td>

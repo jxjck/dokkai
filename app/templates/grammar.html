@@ -844,9 +844,6 @@
 
 
 
-
-
-
 <!-- AI Assistant -->
 <div id="aiBox" class="ai-box">
   <div class="ai-header">
@@ -864,7 +861,7 @@
 
     <div id="aiChat" class="ai-chat"></div>
 
-    <!-- Add-to-deck form (auto-filled by JS from /grammar_assistant response) -->
+    <!-- deck add form (auto-filled by js from /grammar_assistant response) -->
     <form id="aiAddForm" class="mt-2" method="POST" action="{{ url_for('add_grammar_card') }}">
       <input type="hidden" name="front" id="ai_front">
       <input type="hidden" name="back" id="ai_back">
@@ -886,7 +883,7 @@
   </div>
 </div>
 
-</div> <!-- /container -->
+</div><!-- /container -->
 
 <style>
 .ai-box{

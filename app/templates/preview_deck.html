@@ -6,6 +6,7 @@
   <p class="mb-3 text-muted">{{ deck.description }}</p>
 
   <ul class="list-group mb-4">
+    {# loop through each card in the selected deck #}
     {% for card in deck.cards %}
       <li class="list-group-item">
         <strong>{{ card.front }}</strong> - {{ card.back }}
@@ -13,10 +14,10 @@
           <span class="text-muted ms-2">({{ card.reading }})</span>
         {% endif %}
 
+        {# show example sentence if available #}
         {% if card.get('sentence') %}
-  <p>Example: {{ card.sentence }}</p>
-{% endif %}
-
+          <p>Example: {{ card.sentence }}</p>
+        {% endif %}
       </li>
     {% endfor %}
   </ul>

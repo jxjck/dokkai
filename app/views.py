@@ -1,11 +1,6 @@
-import os
-import re
 import uuid
-
 from flask import render_template, redirect, url_for, flash, request, Blueprint, Response, send_from_directory, session, jsonify
 from sqlalchemy import func
-
-
 from app import app, db
 from app.models import User, Flashcard, Activity, Deck
 from app.forms import LoginForm, RegisterForm, FlashcardForm
@@ -14,37 +9,26 @@ import sqlalchemy as sa
 from datetime import datetime, timedelta, timezone, date
 import csv
 from io import StringIO
-
 from fsrs import Scheduler, Card, Rating
-
 from werkzeug.utils import secure_filename
-
 from app.premade_decks import days_of_week_deck
-
 from app.premade_decks import premade_decks
-
 import random
-
 from .kana_dict import kana_data
-
-
-#note to self- remove redundant imports @ some point
-
-#ai assisstant thing
+#some of these may be redundant or auto imported by ide
+#ai assisst
 import os
 from dotenv import load_dotenv
 import openai
-
+import os, re, json
+from flask import jsonify, request
+#####
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
-
-
-
+##api key currently not loaded
 flashcards_bp = Blueprint('flashcards', __name__)
-
-
+#fsrs
 scheduler = Scheduler()
-
 
 def log_activity(message):
     if current_user.is_authenticated:
@@ -52,21 +36,15 @@ def log_activity(message):
         db.session.add(activity)
         db.session.commit()
 
-
-
-###aug9
+#both show while not logged in on navbar (base.html)
 @app.route('/about')
 def about():
     return render_template('about.html')
-
 @app.route('/how-to-use')
 def how_to_use():
     return render_template('how_to_use.html')
 
-
-
-
-
+#kana guesser~adapted from old github repo
 @app.route('/kana', methods=['GET', 'POST'])
 @login_required
 def kana_guesser():
@@ -112,7 +90,7 @@ def kana_guesser():
             result = "Correct!"
             session["kana_correct_count"] = session.get("kana_correct_count", 0) + 1
 
-            #updating the streak
+            #updating streak in profile
             if session["kana_correct_count"] > current_user.kana_streak:
                 current_user.kana_streak = session["kana_correct_count"]
                 db.session.commit()
@@ -135,12 +113,8 @@ def kana_guesser():
 
     hiragana_groups = build_group_list(kana_data["hiragana"], "h")
     katakana_groups = build_group_list(kana_data["katakana"], "k")
-
     return render_template(
-        "kana_guesser.html",
-        kana=kana_char,
-        result=result,
-        correct_romaji=correct_romaji,
+        "kana_guesser.html", kana=kana_char, result=result, correct_romaji=correct_romaji,
         selected_groups=selected_groups,
         hiragana_groups=hiragana_groups,
         katakana_groups=katakana_groups
@@ -148,15 +122,17 @@ def kana_guesser():
 
 
 
-
-
-
+#flashcards page + fsrs logic
+#probably needs cleaning up but in its current state works fine
 @app.route('/flashcards', methods=['GET', 'POST'])
 @login_required
 def flashcards():
     now = datetime.now(timezone.utc)
 
-    # --- daily new-card quota state ---
+    #daily new-card quota state
+    #new_limit is the user's daily new card cap (default 10, similar to Anki)
+    #reviewed_new_ids stores IDs of new cards already seen today
+    #reset reviewed_new_ids when the calendar date changes
     new_limit = current_user.new_cards_per_day or 10
     reviewed_new_ids = session.get('reviewed_new_card_ids', [])
     today_key = now.date().isoformat()
@@ -165,43 +141,51 @@ def flashcards():
         reviewed_new_ids = []
         session['reviewed_new_card_ids'] = reviewed_new_ids
 
-    # --- counts for UI ---
+    #counts for UI (numbers shown above the card)
+    #new_available = number of never studied cards (repetition == 0)
     new_available = Flashcard.query.filter(
         Flashcard.user_id == current_user.id,
         Flashcard.repetition == 0
     ).count()
 
+    #review_due = number of mature cards (repetition > 1) due for review now
     review_due = Flashcard.query.filter(
         Flashcard.user_id == current_user.id,
         Flashcard.repetition > 1,
         Flashcard.due_date <= now
     ).count()
 
-    # learning = any card still in learning/relearn steps (stable green number)
+    #learning_total = cards currently in learning/relearn steps
     learning_total = Flashcard.query.filter(
         Flashcard.user_id == current_user.id,
         Flashcard.learning_step_index.isnot(None)
     ).count()
 
-    combined_due = review_due + learning_total
+    combined_due = review_due + learning_total  #all due except brand new
 
-    # new due today (respect quota)
+    #new due today (respect quota)
+    #must be repetition == 0 and not already reviewed today
     new_due_all = Flashcard.query.filter(
         Flashcard.user_id == current_user.id,
         Flashcard.repetition == 0,
         ~Flashcard.id.in_(reviewed_new_ids)
     ).count()
+
+    #remaining slots in today's new-card quota
     new_quota_left = max(0, new_limit - len(reviewed_new_ids))
+    #actual new cards to study today (limited by quota)
     new_due_today = min(new_due_all, new_quota_left)
 
+    #total workload today (reviews + quota-limited new cards)
     total_due = review_due + new_due_today
 
-    # ---------- POST FIRST: lock to submitted card_id ----------
+    #POST request handler (actions taken after user submits something)
     if request.method == 'POST':
         card_id = request.form.get('card_id', type=int)
         action = request.form.get('action')
         rating_str = request.form.get('rating')
 
+        #safety check: card_id must be valid
         if not card_id:
             return redirect(url_for('flashcards'))
 
@@ -212,7 +196,7 @@ def flashcards():
         if not flashcard:
             return redirect(url_for('flashcards'))
 
-        # 1) Just flip and show the back of THIS card
+        #flip card to show back side
         if action == 'show':
             return render_template(
                 'flashcards.html',
@@ -226,7 +210,7 @@ def flashcards():
                 show_answer=True
             )
 
-        # 2) Rating on THIS card
+        #rating given on card (Again/Good)
         if rating_str:
             rating_map = {'again': Rating.Again, 'good': Rating.Good}
             rating = rating_map.get(rating_str)
@@ -234,23 +218,24 @@ def flashcards():
                 flash('Invalid rating.', 'danger')
                 return redirect(url_for('flashcards'))
 
+            #track reviewed count for XP later
             session['cards_reviewed'] = session.get('cards_reviewed', 0) + 1
 
-            # FSRS baseline (we still override due for learning/relearn steps below)
+            #FSRS baseline calculation (default due date)
             fsrs_card = Card()
             updated_card, _ = scheduler.review_card(fsrs_card, rating)
             flashcard.last_review = now
             flashcard.due_date = updated_card.due
 
-            # Step plans (Anki-like)
-            NEW_STEPS = [1, 5, 30]   # minutes
+            #learning/relearn step plans
+            NEW_STEPS = [1, 5, 30]   #minutes
             RELEARN_STEPS = [2, 5]
             def due_in_minutes(m): return now + timedelta(minutes=m)
 
             step = flashcard.learning_step_index
 
+            #first-time seen card
             if flashcard.repetition == 0:
-                # first-time seen -> enter learning step 0
                 if flashcard.id not in reviewed_new_ids:
                     reviewed_new_ids.append(flashcard.id)
                     session['reviewed_new_card_ids'] = reviewed_new_ids
@@ -258,6 +243,7 @@ def flashcards():
                 flashcard.learning_step_index = 0
                 flashcard.due_date = due_in_minutes(NEW_STEPS[0])
 
+            #learning/relearning card
             elif flashcard.repetition == 1:
                 is_relearn = flashcard.is_lapsed_learning
                 if is_relearn:
@@ -268,12 +254,12 @@ def flashcards():
                             flashcard.learning_step_index = idx
                             flashcard.due_date = due_in_minutes(RELEARN_STEPS[idx])
                         else:
-                            # graduate from relearn
+                            #graduate from relearn back into review
                             flashcard.repetition = 2
                             flashcard.learning_step_index = None
                             flashcard.is_lapsed_learning = False
                     else:
-                        # again -> restart relearn
+                        #Again resets relearn to step 0
                         flashcard.learning_step_index = 0
                         flashcard.due_date = due_in_minutes(RELEARN_STEPS[0])
                 else:
@@ -284,16 +270,16 @@ def flashcards():
                             flashcard.learning_step_index = idx
                             flashcard.due_date = due_in_minutes(NEW_STEPS[idx])
                         else:
-                            # graduate new -> enter review
+                            #graduate new card into review
                             flashcard.repetition = 2
                             flashcard.learning_step_index = None
                     else:
-                        # again -> back to step 0
+                        #Again resets new card to step 0
                         flashcard.learning_step_index = 0
                         flashcard.due_date = due_in_minutes(NEW_STEPS[0])
 
+            #review card (mature card in review stage)
             else:
-                # review card
                 if rating == Rating.Again:
                     flashcard.lapses = (flashcard.lapses or 0) + 1
                     flashcard.repetition = 1
@@ -301,18 +287,19 @@ def flashcards():
                     flashcard.learning_step_index = 0
                     flashcard.due_date = due_in_minutes(RELEARN_STEPS[0])
                 else:
-                    flashcard.learning_step_index = None  # stays in review
+                    flashcard.learning_step_index = None  #remains in review
 
             db.session.commit()
             flash(f"Card updated! Next due: {flashcard.due_date}", 'success')
             return redirect(url_for('flashcards'))
 
-        # Unknown POST
+        #fallback for unexpected POST
         return redirect(url_for('flashcards'))
 
-    # ---------- GET: choose next card ----------
+    #GET request handler: choose next card to show
     last_card_id = session.get('last_card_id')
 
+    #helper: prefer a card that isn’t the same as last_card_id
     def pick_first_other(q, order_clause):
         if last_card_id:
             alt = q.filter(Flashcard.id != last_card_id).order_by(order_clause).first()
@@ -320,7 +307,7 @@ def flashcards():
                 return alt
         return q.order_by(order_clause).first()
 
-    # 1) review due now
+    #1) pick due review card
     review_q = Flashcard.query.filter(
         Flashcard.user_id == current_user.id,
         Flashcard.repetition > 1,
@@ -328,7 +315,7 @@ def flashcards():
     )
     review_card = pick_first_other(review_q, Flashcard.due_date)
 
-    # 2) learning due now
+    #2) pick due learning card
     learning_due_q = Flashcard.query.filter(
         Flashcard.user_id == current_user.id,
         Flashcard.repetition == 1,
@@ -336,7 +323,7 @@ def flashcards():
     )
     learning_due_card = pick_first_other(learning_due_q, Flashcard.due_date)
 
-    # 3) new (quota)
+    #3) pick new card if quota allows
     new_card = None
     if new_quota_left > 0:
         new_q = Flashcard.query.filter(
@@ -348,7 +335,7 @@ def flashcards():
 
     flashcard = review_card or learning_due_card or new_card
 
-    # 4) nothing due? show soonest learning even if not due (ignore mini timers)
+    #4) if nothing is due, show soonest learning card (ignores timers)
     if not flashcard and review_due == 0 and new_due_today == 0:
         learning_any_q = Flashcard.query.filter(
             Flashcard.user_id == current_user.id,
@@ -356,7 +343,7 @@ def flashcards():
         )
         flashcard = pick_first_other(learning_any_q, Flashcard.due_date)
 
-    # 5) still nothing? peek ahead 1 minute
+    #5) still nothing? peek ahead by 1 minute
     if not flashcard:
         soon = now + timedelta(minutes=1)
         peek_q = Flashcard.query.filter(
@@ -365,12 +352,13 @@ def flashcards():
         )
         flashcard = pick_first_other(peek_q, Flashcard.due_date)
 
+    #no card left to study, log completion
     if not flashcard:
-        # completion logging (once per day)
         last_completion = db.session.query(sa.func.max(Activity.timestamp)).filter(
             Activity.user_id == current_user.id,
             Activity.message.like("Completed all due flashcards%")
         ).scalar()
+        #only log once per day
         if not last_completion or last_completion.date() < now.date():
             cards_reviewed = session.pop('cards_reviewed', 0)
             session.pop('xp_earned', None)
@@ -379,6 +367,7 @@ def flashcards():
             msg = (f"Completed all due flashcards and earned {xp_earned} XP ✨"
                    if xp_earned > 0 else "Completed all due flashcards")
             db.session.add(Activity(user_id=current_user.id, message=msg, timestamp=now))
+            #check last 5 completions to track streaks
             recent_days = db.session.query(Activity.timestamp).filter(
                 Activity.user_id == current_user.id,
                 Activity.message.like("Completed all due flashcards%")
@@ -394,23 +383,25 @@ def flashcards():
                     timestamp=now
                 ))
             db.session.commit()
-
         session['last_card_id'] = None
+
         return render_template(
             'flashcards.html',
             flashcard=None,
             total_due=0,
             new_due=new_due_today,
+
             review_due=review_due,
+
+
             learning_due=learning_total,
             combined_due=combined_due,
             new_available=new_available,
             show_answer=False
         )
-
-    # remember which we chose (for anti-repeat)
+    #store chosen card so next one isn't identical
     session['last_card_id'] = flashcard.id
-
+    #render template with chosen card
     return render_template(
         'flashcards.html',
         flashcard=flashcard,
@@ -422,6 +413,7 @@ def flashcards():
         new_available=new_available,
         show_answer=False
     )
+##########
 
 
 
@@ -432,8 +424,11 @@ def flashcards():
 @app.route('/update_settings', methods=['POST'])
 @login_required
 def update_settings():
+    #get the submitted value from form as integer
     new_limit = request.form.get('new_cards_per_day', type=int)
+    #validate the input (must be number >= 0)
     if new_limit is not None and new_limit >= 0:
+        #save new limit to current user in database
         current_user.new_cards_per_day = new_limit
         db.session.commit()
         flash('New card limit updated.', 'success')
@@ -445,11 +440,13 @@ def update_settings():
 
 
 
+
 @app.route('/add_flashcard', methods=['GET', 'POST'])
 @login_required
 def add_flashcard():
     form = FlashcardForm()
     if form.validate_on_submit():
+        #create new flashcard object with form data
         new_card = Flashcard(
             user_id=current_user.id,
             front=form.front.data,
@@ -461,46 +458,34 @@ def add_flashcard():
         )
         db.session.add(new_card)
         db.session.commit()
-
-        # log
+        #log activity for dashboard feed
         db.session.add(Activity(
             user_id=current_user.id,
             message="Added a new flashcard!",
             timestamp=datetime.utcnow()
         ))
         db.session.commit()
-
         flash("Flashcard added successfully.", "success")
         return redirect(url_for('add_flashcard'))
-
     return render_template('add_flashcard.html', form=form)
-
-
-
-
-
-#move up later##
 
 
 @app.route('/grammar_assistant', methods=['POST'])
 @login_required
 def grammar_assistant():
-    ##move up later after tests##
-    import os, re, json
-    from flask import jsonify, request
-
     data = request.get_json(silent=True) or {}
     user_msg = (data.get('message') or '').strip()
     lesson_title = (data.get('lesson_title') or '').strip()
     lesson_context = (data.get('lesson_context') or '').strip()
 
     if not user_msg:
-        return jsonify({"error": "Ask me for an example (e.g., 'て-form please')."}), 400
+        return jsonify({"error": "Ask for an example sentence here."}), 400
 
     api_key = os.getenv("OPENAI_API_KEY")
     if not api_key:
-        return jsonify({"error": "Server is missing OPENAI_API_KEY."}), 500
+        return jsonify({"error": "Server is missing api key"}), 500
 
+    #system prompt forces the AI to return JSON only
     system = (
         "You are a Japanese grammar assistant inside a flashcard app. "
         "Given a CURRENT LESSON title + short lesson text + a user request, "
@@ -515,18 +500,17 @@ def grammar_assistant():
         "Rules: Use vocabulary/grammar consistent with the lesson. Keep it N5/N4 and short. "
         "Prefer forms highlighted in the lesson (e.g., でした for polite past)."
     )
+
     user = {
         "lesson_title": lesson_title,
-        "lesson_context": lesson_context[:1800],
+        "lesson_context": lesson_context[:1800],  #truncate context length
         "request": user_msg
     }
 
-    # ---- Legacy SDK call (works with openai==0.27.x) ----
     try:
         import openai
         openai.api_key = api_key
-
-        # 0.27.x predates the 4o models; use gpt-3.5-turbo here
+        #legacy OpenAI call (SDK < 1.0)
         resp = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
             temperature=0.6,
@@ -540,7 +524,6 @@ def grammar_assistant():
     except Exception as e:
         return jsonify({"error": f"AI error: {e}"}), 500
 
-    # ---- Parse the model JSON ----
     try:
         j = json.loads(raw)
         focus = (j.get("focus_token") or "").strip()
@@ -562,6 +545,7 @@ def grammar_assistant():
     focus_display = focus if focus else (lesson_title.split(":")[-1].strip() or "文法")
     front = f"{focus_display}<br>{jp}"
 
+    #highlight focus token if available
     jp_marked = jp.replace(focus, f"<mark>{focus}</mark>", 1) if focus else jp
     sentence_for_db = f"{jp_marked} {en}"
 
@@ -587,15 +571,6 @@ def grammar_assistant():
 
 
 
-
-
-
-
-
-
-
-
-
 @app.route("/browse_decks")
 @login_required
 def browse_decks():
@@ -610,7 +585,6 @@ def preview_premade_deck(deck_name):
         return redirect(url_for("browse_decks"))
     return render_template("preview_deck.html", deck=deck)
 
-
 @app.route("/import_premade_deck", methods=["POST"])
 @login_required
 def import_premade_deck():
@@ -619,7 +593,7 @@ def import_premade_deck():
     if not deck:
         flash("Deck not found.", "danger")
         return redirect(url_for("browse_decks"))
-
+    #import each card into user’s collection
     for card in deck["cards"]:
         flashcard = Flashcard(
             user_id=current_user.id,
@@ -630,54 +604,9 @@ def import_premade_deck():
             sentence=card.get("sentence", ""),
         )
         db.session.add(flashcard)
-
     db.session.commit()
     flash(f"{deck_name} deck imported!", "success")
     return redirect(url_for("browse_flashcards"))
-
-
-
-
-@app.route('/import_deck/<int:deck_id>', methods=['POST'])
-@login_required
-def import_deck(deck_id):
-    original = Deck.query.get_or_404(deck_id)
-    if original.user_id is not None:
-        flash("You can only import pre-made decks.", "warning")
-        return redirect(url_for('browse_decks'))
-
-    #create new deck for user
-    user_deck = Deck(name=original.name, description=original.description, user_id=current_user.id)
-    db.session.add(user_deck)
-    db.session.commit()
-
-
-
-    ##cards thing
-    for card in original.flashcards:
-        copy = Flashcard(
-            user_id=current_user.id,
-            front=card.front,
-            back=card.back,
-            reading=card.reading,
-            meaning=card.meaning,
-            sentence=card.sentence,
-            due_date=datetime.utcnow(),
-            deck_id=user_deck.id
-        )
-        db.session.add(copy)
-
-    db.session.commit()
-    flash(f"Imported deck: {original.name}", "success")
-    return redirect(url_for('flashcards'))
-
-
-##random comment to test push
-
-
-
-
-
 
 
 
@@ -690,9 +619,7 @@ def browse_flashcards():
     user_cards = Flashcard.query.filter_by(user_id=current_user.id).all()
     return render_template('browse_flashcards.html', flashcards=user_cards)
 
-#note to self### ~ maybe change this later, not sure how to handle with proper practices
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
-
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
@@ -712,7 +639,6 @@ def upload_profile_image():
     filename = f"{uuid.uuid4().hex}_{file.filename}"
     filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
     file.save(filepath)
-
     #del old
     if current_user.profile_picture:
         old_path = os.path.join(app.config['UPLOAD_FOLDER'], current_user.profile_picture)
@@ -724,7 +650,7 @@ def upload_profile_image():
     #log
     activity = Activity(
         user_id=current_user.id,
-        message="Uploaded new profile picture 🖼️"
+        message="Uploaded new profile picture!"
     )
     db.session.add(activity)
     db.session.commit()
@@ -732,23 +658,17 @@ def upload_profile_image():
     flash('Profile picture updated!', 'success')
     return redirect(url_for('dashboard'))
 
-
-
-# route 4 uploaded profile pictures
+#route 4 uploaded profile pictures
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
     return send_from_directory(os.path.join(app.root_path, 'data', 'uploads'), filename)
 
-
-
-#grammar page (started 25th jul)
+#grammar page
 @app.route('/grammar')
 @login_required
 def grammar():
     return render_template('grammar.html')
-
-
-#adding card from grammar explanation
+#adding card from grammar explanation button
 @app.route('/add_grammar_card', methods=['POST'])
 @login_required
 def add_grammar_card():
@@ -778,14 +698,13 @@ def add_grammar_card():
     db.session.add(new_card)
     db.session.commit()
 
-    #log logic
+    #log logic for activity feed
     db.session.add(Activity(
         user_id=current_user.id,
-        message="Added a grammar flashcard 📚",
+        message="Added a grammar flashcard!",
         timestamp=datetime.utcnow()
     ))
     db.session.commit()
-
     flash('Grammar flashcard added!', 'success')
     return redirect(url_for('grammar'))
 
@@ -815,7 +734,7 @@ def edit_flashcard(card_id):
     return render_template("edit_flashcard.html", form=form, card=card)
 
 
-#delete  a card from db
+#delete a card from db
 @app.route("/delete/<int:card_id>", methods=["POST"])
 @login_required
 def delete_flashcard(card_id):
@@ -830,24 +749,11 @@ def delete_flashcard(card_id):
     return redirect(url_for("browse_flashcards"))
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 #leaderboard page
 @app.route('/leaderboard')
 @login_required
 def leaderboard():
     card_count = sa.func.count(Flashcard.id).label('card_count')
-
     #get user and card count
     results = db.session.query(
         User,
@@ -856,34 +762,37 @@ def leaderboard():
 
     #sort users in Python by level and then flashcard count
     sorted_results = sorted(results, key=lambda item: (item[0].level, item[1]), reverse=True)
-
     #rank thing
     leaderboard_data = [
         (user, count, idx + 1, user.level)
         for idx, (user, count) in enumerate(sorted_results)
     ]
-
     return render_template('leaderboard.html', leaderboard=leaderboard_data)
 
 
 
-#public profile thing on leaderboard
+#public profile shown from leaderboard or direct link
 @app.route('/user/<username>')
 def public_profile(username):
     user = User.query.filter_by(username=username).first_or_404()
     flashcard_count = Flashcard.query.filter_by(user_id=user.id).count()
-
+    #only show recent activity if user has it set to public
     activities = []
     if user.show_activity_public:
-        activities = Activity.query.filter_by(user_id=user.id).order_by(Activity.timestamp.desc()).limit(10).all()
+        activities = (
+            Activity.query
+            .filter_by(user_id=user.id)
+            .order_by(Activity.timestamp.desc())
+            .limit(10)
+            .all()
+        )
+    return render_template(
+        'public_profile.html',
+        user=user, flashcard_count=flashcard_count,
+        activities=activities
+    )
 
-    return render_template('public_profile.html',
-                           user=user,
-                           flashcard_count=flashcard_count,
-                           activities=activities)
-
-
-
+#toggle whether activity feed is shown publicly
 @app.route('/toggle_public_activity', methods=['POST'])
 @login_required
 def toggle_public_activity():
@@ -902,7 +811,7 @@ def home():
     if current_user.is_authenticated:
         today = date.today()
         last_week = today - timedelta(days=6)
-
+        #query how many cards were reviewed per day in the past week
         reviewed_counts = db.session.query(
             func.date(Flashcard.last_review),
             func.count()
@@ -911,22 +820,27 @@ def home():
             Flashcard.last_review != None,
             Flashcard.last_review >= last_week
         ).group_by(func.date(Flashcard.last_review)).all()
-
+        #generate last 7 days as x-axis labels for the js library thing on home
         date_labels = [(today - timedelta(days=i)).isoformat() for i in reversed(range(7))]
         data_dict = {d: 0 for d in date_labels}
+
+        #fill data_dict with counts from the query
         for d, count in reviewed_counts:
             data_dict[d] = count
 
-        #count duecards
+        #count how many cards are due right now
         now = datetime.utcnow()
         due_count = Flashcard.query.filter(
             Flashcard.user_id == current_user.id,
             Flashcard.due_date <= now
         ).count()
-
-        return render_template("home.html", title="Home", card_data=data_dict, due_count=due_count)
-
+        return render_template(
+            "home.html", title="Home",
+            card_data=data_dict,
+            due_count=due_count
+        )
     return render_template("home.html", title="Home")
+
 
 
 
@@ -938,25 +852,25 @@ def home():
 def dashboard():
     user = current_user
 
+    #total flashcards created by the user
     flashcard_count = Flashcard.query.filter_by(user_id=user.id).count()
-
-    #track unique days user has completed all flashcards
+    #track unique days user completed all due flashcards
     unique_days = db.session.query(func.date(Activity.timestamp)).filter(
         Activity.user_id == user.id,
         Activity.message.like("Completed all due flashcards%")
     ).distinct().count()
 
-    #recent activity
+    #get 5 most recent activities for the activity feed
     recent_activities = Activity.query.filter_by(user_id=user.id).order_by(
         Activity.timestamp.desc()).limit(5).all()
 
-    #xp and level
+    #calculate xp level (level grows with square root of xp/100)
     xp = user.xp
     level = int((xp / 100) ** 0.5)
     xp_for_next = ((level + 1) ** 2) * 100
     xp_to_next = xp_for_next - xp
 
-    # todays cards
+    #how many cards reviewed today
     today = date.today()
     reviewed_today = Flashcard.query.filter(
         Flashcard.user_id == user.id,
@@ -964,42 +878,32 @@ def dashboard():
         func.date(Flashcard.last_review) == today
     ).count()
 
-    # recs
+    #recommended minutes of native content based on reviews done today
     reading_minutes = reviewed_today * 2
     listening_minutes = int(reviewed_today * 1.5)
-
-    return render_template('dashboard.html',
-                           user=user,
-                           flashcard_count=flashcard_count,
-                           days_active=unique_days,
-                           recent_activities=recent_activities,
-                           level=level,
-                           xp_to_next=xp_to_next,
-                           reading_minutes=reading_minutes,
-                           listening_minutes=listening_minutes)
+    return render_template(
+        'dashboard.html', user=user, flashcard_count=flashcard_count,
+        days_active=unique_days, recent_activities=recent_activities,
+        level=level, xp_to_next=xp_to_next,
+        reading_minutes=reading_minutes,
+        listening_minutes=listening_minutes
+    )
 
 
 
 
 
-
-
-
-
-
-# exporting flashcards (currently as csv, look at .apkg (anki) and maybe .txt too)
+#exporting flashcards (currently as csv)
 @app.route("/export_flashcards")
 @login_required
 def export_flashcards():
-    # get cards for current user
+    #get cards for current user
     flashcards = Flashcard.query.filter_by(user_id=current_user.id).all()
-
-    # create in-memory csv
+    #create in-memory csv
     si = StringIO()
     writer = csv.writer(si)
     writer.writerow(["Front", "Back", "Reading", "Meaning", "Sentence", "Due Date"])
-
-    # write each flashcard row to the csv
+    #write each flashcard row to the csv
     for card in flashcards:
         writer.writerow([
             card.front,
@@ -1013,16 +917,12 @@ def export_flashcards():
     output = si.getvalue()
     return Response(
         output,
-        mimetype="text/csv",
-        headers={"Content-Disposition": "attachment;filename=dokkai_flashcards.csv"}
+        mimetype="text/csv", headers={"Content-Disposition": "attachment;filename=dokkai_flashcards.csv"}
     )
 
 @app.route("/kana")
 def kana():
     return render_template("kana.html", title="Kana")
-
-
-
 
 
 
@@ -1064,7 +964,6 @@ def register():
         flash('Account created :) You can now log in at the top right.', 'success')
         return redirect(url_for('home'))
     return render_template('generic_form.html', title='Register', form=form)
-
 
 
 @app.route('/logout')

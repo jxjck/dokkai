@@ -50,8 +50,6 @@ hiragana_deck = {
         {"front": "ん", "back": "n", "reading": "ん", "meaning": "n"},
     ]
 }
-
-
 katakana_deck = {
     "name": "Katakana",
     "description": "Full katakana deck with romaji readings.",
@@ -104,7 +102,6 @@ katakana_deck = {
         {"front": "ン", "back": "n", "reading": "ン", "meaning": "n"},
     ]
 }
-
 
 days_of_week_deck = {
     "name": "Days of the Week",

@@ -3,21 +3,22 @@
 {% block content %}
 <div class="container mt-5">
 
-  {% if not current_user.is_authenticated %}
+{% if not current_user.is_authenticated %}
   <div class="text-center mb-5">
     <h1 class="display-5 fw-bold">Welcome to Dokkai</h1>
-    <p class="lead">An all-in-one platform for serious Japanese learners.</p>
-    <p class="text-muted">Track progress. Learn grammar. Master vocabulary. Get native content recommendations.</p>
+    <p class="lead">An all-in-one language learning platform for fluency.</p>
+    <p class="text-muted">Track progress. Learn vocab. Get native content recommendations.</p>
   </div>
-  {% endif %}
+{% endif %}
+
 
   <div class="row">
 
-    <!-- side panel -->
+    <!-- left panel -->
     <div class="col-md-3 mb-4">
       <div class="card h-100 shadow-sm">
         <div class="card-header fw-semibold adaptive-header border-bottom">
-          Learn by Topic
+          What Dokkai Offers
         </div>
         <ul class="list-group list-group-flush">
           <li class="list-group-item">
@@ -90,8 +91,8 @@
       {% else %}
       <div class="border border-2 rounded p-5 w-100 h-100" style="min-height: 300px; border-style: dashed;">
         <i class="bi bi-map display-4 text-muted mb-3"></i>
-        <h5 class="text-muted">Future Activity View / Map / Main Feature</h5>
-        <p class="text-muted">Placeholder for main application content</p>
+        <h5 class="text-muted">This is where your flashcard statistics would go once you're signed up!</h5>
+        <p class="text-muted">Create an account to start tracking your progress.</p>
       </div>
       {% endif %}
     </div>
@@ -119,11 +120,11 @@
           <p class="card-text">Short description of benefits:</p>
           <ul class="mb-3 ps-3">
             <li><i class="bi bi-check2-circle text-primary me-1"></i>Progress tracking</li>
-            <li><i class="bi bi-check2-circle text-primary me-1"></i>Personalized study plans</li>
             <li><i class="bi bi-check2-circle text-primary me-1"></i>Community features</li>
+            <li><i class="bi bi-check2-circle text-primary me-1"></i>FSRS flashcards</li>
           </ul>
           <a href="{{ url_for('register') }}" class="btn btn-dark w-100 mb-2">Register</a>
-          <a href="{{ url_for('login') }}" class="btn btn-dark w-100">Login</a>
+          <a href="{{ url_for('login') }}" class="btn btn-dark w-100">Already signed up? Log in</a>
         </div>
         {% endif %}
       </div>

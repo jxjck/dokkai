@@ -127,13 +127,8 @@ def reset_db():
         ),
     ]
 
-
-
     db.session.add_all(test_cards)
-
-
     db.session.add_all(days_of_week_deck)
-
     db.session.commit()
 
     print("Database reset complete.")

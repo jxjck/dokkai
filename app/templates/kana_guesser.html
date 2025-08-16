@@ -4,10 +4,12 @@
 <div class="card p-4">
     <h2 class="text-center">Kana Guesser</h2>
 
+    {# show the kana character if one is active #}
     {% if kana %}
     <div class="text-center" style="font-size: 64px; color: #3a78e4;">{{ kana }}</div>
     {% endif %}
 
+    {# show feedback (correct/incorrect) #}
     {% if result %}
     <div class="text-center mt-2 mb-2">
         <strong>{{ result }}</strong>
@@ -15,6 +17,7 @@
     {% endif %}
 
     <form method="POST" class="text-center mt-3">
+        {# user input box #}
         <div class="d-flex justify-content-center mb-3">
             <input type="text"
                    name="user_input"
@@ -25,12 +28,14 @@
                    autofocus>
         </div>
 
+        {# preserve state across POSTs #}
         <input type="hidden" name="prev_kana" value="{{ kana }}">
         <input type="hidden" name="prev_romaji" value="{{ correct_romaji }}">
         {% for g in selected_groups %}
             <input type="hidden" name="selected_groups" value="{{ g }}">
         {% endfor %}
 
+        {# streak counters #}
         <div class="d-flex justify-content-center mb-4 gap-2">
             <div>
                 <div class="btn btn-sm btn-outline-primary disabled w-100">
@@ -44,8 +49,11 @@
             </div>
         </div>
 
+        {# kana group selection tables #}
         {% if hiragana_groups or katakana_groups %}
         <div class="mt-4 text-start">
+
+            {# hiragana group toggle grid #}
             <details class="mb-3">
                 <summary><strong>Select Hiragana Group</strong></summary>
                 <div class="table-responsive mt-3">
@@ -79,6 +87,7 @@
                 </div>
             </details>
 
+            {# katakana group toggle grid #}
             <details>
                 <summary><strong>Select Katakana Group</strong></summary>
                 <div class="table-responsive mt-3">
@@ -114,13 +123,13 @@
         </div>
         {% endif %}
 
+        {# link back to premade decks #}
         <div class="text-center mt-5">
-    <p class="text-muted">
-        Rather use a flashcard deck?
-        <a href="{{ url_for('browse_decks') }}">Click here :)</a>.
-    </p>
-</div>
-
+            <p class="text-muted">
+                Rather use a flashcard deck?
+                <a href="{{ url_for('browse_decks') }}">Click here :)</a>.
+            </p>
+        </div>
     </form>
 </div>
 {% endblock %}

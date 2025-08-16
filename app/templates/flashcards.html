@@ -2,10 +2,9 @@
 
 {% block content %}
 <div class="page-container">
-
     <!-- Left fixed sidebar -->
     <div class="action-menu">
-        <!-- New card limit form: simple number input -->
+        <!-- card limit form: simple number input -->
         <div class="card bg-light mb-3 p-3">
             <form method="POST" action="{{ url_for('update_settings') }}" id="newLimitForm">
                 <label for="newCardLimitInput" class="form-label mb-2">New cards/day</label>
@@ -34,7 +33,6 @@
         <a href="{{ url_for('add_flashcard') }}" class="btn btn-outline-primary mb-2">Add New Flashcard</a>
         <a href="{{ url_for('browse_flashcards') }}" class="btn btn-outline-primary mb-2">Browse Cards</a>
         <a href="{{ url_for('browse_decks') }}" class="btn btn-outline-primary mb-3">Browse Decks</a>
-
         <!-- TTS toggles -->
         <div class="form-check form-switch mt-3">
             <input class="form-check-input" type="checkbox" id="ttsWordToggle" checked>
@@ -44,7 +42,6 @@
             <input class="form-check-input" type="checkbox" id="ttsSentenceToggle" checked>
             <label class="form-check-label" for="ttsSentenceToggle">Sentence TTS</label>
         </div>
-
         <!-- Flash message toggle -->
         <div class="form-check form-switch mt-2">
             <input class="form-check-input" type="checkbox" id="flashMessageToggle" checked>
@@ -56,7 +53,6 @@
         <div class="card-content">
             {% if flashcard %}
                 <div id="frontText" class="front-text">{{ flashcard.front | safe }}</div>
-
                 <!-- Reserve space for the answer to avoid layout jump -->
                 <hr>
                 {% if show_answer %}
@@ -77,7 +73,6 @@
                         <button type="submit" name="action" value="show" class="btn btn-secondary mt-3">Show Answer</button>
                     </form>
                 {% endif %}
-
                 {% if show_answer %}
                     <form method="post" class="mt-3">
                         <input type="hidden" name="card_id" value="{{ flashcard.id }}">
@@ -88,16 +83,14 @@
             {% else %}
                 <p>No cards due right now — great job!</p>
             {% endif %}
-
-            <!-- Two-number queue bar: (Review+Learning) / New -->
+            <!-- two-number queue bar: (Review+Learning) / New -->
             <div class="queue-bar mt-3" aria-label="Cards due (Review + Learning) / New">
               <span class="q review" title="Due / Learning">{{ combined_due }}</span>
               <span class="sep">/</span>
               <span class="q new" title="New">{{ new_due }}</span>
             </div>
         </div>
-
-        <!-- Flash message area UNDER the card (only render if cookie says ON) -->
+        <!-- flash message area under the card (only render if cookie says on) -->
         {% if request.cookies.get('show_flashes', '1') == '1' %}
         {% with messages = get_flashed_messages(with_categories=true, category_filter=['success']) %}
             {% if messages %}
