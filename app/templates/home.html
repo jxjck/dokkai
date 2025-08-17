@@ -3,14 +3,13 @@
 {% block content %}
 <div class="container mt-5">
 
-{% if not current_user.is_authenticated %}
-  <div class="text-center mb-5">
-    <h1 class="display-5 fw-bold">Welcome to Dokkai</h1>
-    <p class="lead">An all-in-one language learning platform for fluency.</p>
-    <p class="text-muted">Track progress. Learn vocab. Get native content recommendations.</p>
-  </div>
-{% endif %}
-
+  {% if not current_user.is_authenticated %}
+    <div class="text-center mb-5">
+      <h1 class="display-5 fw-bold">Welcome to Dokkai</h1>
+      <p class="lead">An all-in-one language learning platform for fluency.</p>
+      <p class="text-muted">Track progress. Learn vocab. Get native content recommendations.</p>
+    </div>
+  {% endif %}
 
   <div class="row">
 
@@ -52,48 +51,37 @@
     <!-- main chart or placeholder -->
     <div class="col-md-6 mb-4 text-center d-flex align-items-center justify-content-center">
       {% if current_user.is_authenticated %}
-      <div class="card w-100 p-4 shadow-sm" style="min-height: 300px;">
-        <h5 class="mb-3 text-start">Flashcards Reviewed (Last 7 Days)</h5>
-        <canvas id="flashcardChart" width="100%" height="60"></canvas>
-        <script>
-          const ctx = document.getElementById('flashcardChart').getContext('2d');
-          const flashcardChart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-              labels: {{ card_data.keys()|list|tojson }},
-              datasets: [{
-                label: 'Cards Reviewed',
-                data: {{ card_data.values()|list|tojson }},
-                backgroundColor: '#2a9d8f'
-              }]
-            },
-            options: {
-              scales: {
-                y: {
-                  beginAtZero: true,
-                  ticks: {
-                    color: '#ccc'
-                  }
-                },
-                x: {
-                  ticks: {
-                    color: '#ccc'
-                  }
-                }
+        <div class="card w-100 p-4 shadow-sm" style="min-height: 300px;">
+          <h5 class="mb-3 text-start">Flashcards Reviewed (Last 7 Days)</h5>
+          <canvas id="flashcardChart" width="100%" height="60"></canvas>
+          <script>
+            const ctx = document.getElementById('flashcardChart').getContext('2d');
+            const flashcardChart = new Chart(ctx, {
+              type: 'bar',
+              data: {
+                labels: {{ card_data.keys()|list|tojson }},
+                datasets: [{
+                  label: 'Cards Reviewed',
+                  data: {{ card_data.values()|list|tojson }},
+                  backgroundColor: '#2a9d8f'
+                }]
               },
-              plugins: {
-                legend: { display: false }
+              options: {
+                scales: {
+                  y: { beginAtZero: true, ticks: { color: '#ccc' } },
+                  x: { ticks: { color: '#ccc' } }
+                },
+                plugins: { legend: { display: false } }
               }
-            }
-          });
-        </script>
-      </div>
+            });
+          </script>
+        </div>
       {% else %}
-      <div class="border border-2 rounded p-5 w-100 h-100" style="min-height: 300px; border-style: dashed;">
-        <i class="bi bi-map display-4 text-muted mb-3"></i>
-        <h5 class="text-muted">This is where your flashcard statistics would go once you're signed up!</h5>
-        <p class="text-muted">Create an account to start tracking your progress.</p>
-      </div>
+        <div class="border border-2 rounded p-5 w-100 h-100" style="min-height: 300px; border-style: dashed;">
+          <i class="bi bi-map display-4 text-muted mb-3"></i>
+          <h5 class="text-muted">This is where your flashcard statistics would go once you're signed up!</h5>
+          <p class="text-muted">Create an account to start tracking your progress.</p>
+        </div>
       {% endif %}
     </div>
 
@@ -101,31 +89,30 @@
     <div class="col-md-3 mb-4">
       <div class="card h-100 shadow-sm">
         {% if current_user.is_authenticated %}
-        <div class="card-header fw-semibold adaptive-header border-bottom">
-          Welcome Back
-        </div>
-        <div class="card-body">
-          <p class="card-text">Continue learning from where you left off or explore new content.</p>
-          <a href="{{ url_for('dashboard') }}" class="btn btn-success w-100 mb-3">Go to Dashboard</a>
-
-          <hr>
-          <p>You have <strong>{{ due_count }}</strong> flashcards due.</p>
-          <a href="{{ url_for('flashcards') }}" class="btn btn-outline-primary w-100">Review Now</a>
-        </div>
+          <div class="card-header fw-semibold adaptive-header border-bottom">
+            Welcome Back
+          </div>
+          <div class="card-body">
+            <p class="card-text">Continue learning from where you left off or explore new content.</p>
+            <a href="{{ url_for('dashboard') }}" class="btn btn-success w-100 mb-3">Go to Dashboard</a>
+            <hr>
+            <p>You have <strong>{{ due_count }}</strong> flashcards due.</p>
+            <a href="{{ url_for('flashcards') }}" class="btn btn-outline-primary w-100">Review Now</a>
+          </div>
         {% else %}
-        <div class="card-header fw-semibold adaptive-header border-bottom">
-          Join Dokkai to Save Your Progress
-        </div>
-        <div class="card-body">
-          <p class="card-text">Short description of benefits:</p>
-          <ul class="mb-3 ps-3">
-            <li><i class="bi bi-check2-circle text-primary me-1"></i>Progress tracking</li>
-            <li><i class="bi bi-check2-circle text-primary me-1"></i>Community features</li>
-            <li><i class="bi bi-check2-circle text-primary me-1"></i>FSRS flashcards</li>
-          </ul>
-          <a href="{{ url_for('register') }}" class="btn btn-dark w-100 mb-2">Register</a>
-          <a href="{{ url_for('login') }}" class="btn btn-dark w-100">Already signed up? Log in</a>
-        </div>
+          <div class="card-header fw-semibold adaptive-header border-bottom">
+            Join Dokkai to Save Your Progress
+          </div>
+          <div class="card-body">
+            <p class="card-text">Short description of benefits:</p>
+            <ul class="mb-3 ps-3">
+              <li><i class="bi bi-check2-circle text-primary me-1"></i>Progress tracking</li>
+              <li><i class="bi bi-check2-circle text-primary me-1"></i>Community features</li>
+              <li><i class="bi bi-check2-circle text-primary me-1"></i>FSRS flashcards</li>
+            </ul>
+            <a href="{{ url_for('register') }}" class="btn btn-dark w-100 mb-2">Register</a>
+            <a href="{{ url_for('login') }}" class="btn btn-dark w-100">Already signed up? Log in</a>
+          </div>
         {% endif %}
       </div>
     </div>
