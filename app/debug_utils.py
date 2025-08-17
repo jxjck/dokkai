@@ -1,7 +1,6 @@
 from datetime import datetime
 from app import db
 from app.models import User, Flashcard
-
 def reset_db():
     print("resetting...ちょっと待ってね:)")
 

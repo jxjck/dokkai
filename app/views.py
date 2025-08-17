@@ -923,9 +923,7 @@ def export_flashcards():
 @app.route("/kana")
 def kana():
     return render_template("kana.html", title="Kana")
-
-
-
+####
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
