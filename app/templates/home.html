@@ -17,7 +17,7 @@
     <div class="col-md-3 mb-4">
       <div class="card h-100 shadow-sm">
         <div class="card-header fw-semibold adaptive-header border-bottom">
-          What Dokkai Offers
+          Dokkai Features
         </div>
         <ul class="list-group list-group-flush">
           <li class="list-group-item">
@@ -55,25 +55,49 @@
           <h5 class="mb-3 text-start">Flashcards Reviewed (Last 7 Days)</h5>
           <canvas id="flashcardChart" width="100%" height="60"></canvas>
           <script>
-            const ctx = document.getElementById('flashcardChart').getContext('2d');
-            const flashcardChart = new Chart(ctx, {
-              type: 'bar',
-              data: {
-                labels: {{ card_data.keys()|list|tojson }},
-                datasets: [{
-                  label: 'Cards Reviewed',
-                  data: {{ card_data.values()|list|tojson }},
-                  backgroundColor: '#2a9d8f'
-                }]
-              },
-              options: {
-                scales: {
-                  y: { beginAtZero: true, ticks: { color: '#ccc' } },
-                  x: { ticks: { color: '#ccc' } }
+            (function () {
+              const isDark = document.body.classList.contains('dark-mode');
+
+              // theme colors
+              const accent = '#d4a373';        // warm accent (bars)
+              const accentBorder = '#c28b5f';   // slightly darker border
+              const tickColor = isDark ? '#e6ded4' : '#6b6b6b';
+              const gridColor = isDark ? 'rgba(230,222,212,0.15)' : 'rgba(0,0,0,0.08)';
+
+              const ctx = document.getElementById('flashcardChart').getContext('2d');
+              new Chart(ctx, {
+                type: 'bar',
+                data: {
+                  labels: {{ card_data.keys()|list|tojson }},
+                  datasets: [{
+                    label: 'Cards Reviewed',
+                    data: {{ card_data.values()|list|tojson }},
+                    backgroundColor: accent,
+                    borderColor: accentBorder,
+                    borderWidth: 1,
+                    borderRadius: 6,
+                    barPercentage: 0.8,
+                    categoryPercentage: 0.8
+                  }]
                 },
-                plugins: { legend: { display: false } }
-              }
-            });
+                options: {
+                  scales: {
+                    y: {
+                      beginAtZero: true,
+                      ticks: { color: tickColor },
+                      grid: { color: gridColor }
+                    },
+                    x: {
+                      ticks: { color: tickColor },
+                      grid: { color: gridColor }
+                    }
+                  },
+                  plugins: {
+                    legend: { display: false }
+                  }
+                }
+              });
+            }());
           </script>
         </div>
       {% else %}
@@ -106,9 +130,9 @@
           <div class="card-body">
             <p class="card-text">Short description of benefits:</p>
             <ul class="mb-3 ps-3">
-              <li><i class="bi bi-check2-circle text-primary me-1"></i>Progress tracking</li>
-              <li><i class="bi bi-check2-circle text-primary me-1"></i>Community features</li>
-              <li><i class="bi bi-check2-circle text-primary me-1"></i>FSRS flashcards</li>
+              <li>Progress tracking</li>
+              <li>Community features</li>
+              <li>FSRS flashcards</li>
             </ul>
             <a href="{{ url_for('register') }}" class="btn btn-dark w-100 mb-2">Register</a>
             <a href="{{ url_for('login') }}" class="btn btn-dark w-100">Already signed up? Log in</a>

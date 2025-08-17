@@ -31,7 +31,8 @@
                                  alt="Profile">
                             <span class="me-2">{{ user.username }}</span>
                             {# button to view user’s public profile page #}
-                            <a href="{{ url_for('public_profile', username=user.username) }}" class="btn btn-sm btn-outline-info">View Profile</a>
+                           <a href="{{ url_for('public_profile', username=user.username) }}" class="btn btn-sm btn-outline-primary">View Profile</a>
+
                         </div>
                     </td>
                     <td>{{ count }}</td>
