@@ -15,8 +15,6 @@ from app.premade_decks import days_of_week_deck
 from app.premade_decks import premade_decks
 import random
 from .kana_dict import kana_data
-#some of these may be redundant or auto imported by ide
-#ai assisst
 import os
 from dotenv import load_dotenv
 import openai
