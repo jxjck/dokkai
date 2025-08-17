@@ -20,7 +20,7 @@ from dotenv import load_dotenv
 import openai
 import os, re, json
 from flask import jsonify, request
-#####
+#######
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
 ##api key currently not loaded
