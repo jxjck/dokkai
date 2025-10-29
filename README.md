@@ -1,5 +1,5 @@
 # Dokkai
-Language learning web app. Create and review flashcards (custom or pre-made), study grammar concepts with examples, generate practice sentences and make flashcards out of them, and use a kana guessing game. There's also profiles, XP, and leaderboards.
+Language learning web app. Create and review flashcards (custom or pre-made), study grammar concepts with examples, generate practice sentences and make flashcards out of them, and use a kana guessing game. There's also profiles, XP, and leaderboards. Live: https://impeding177.pythonanywhere.com/
 ![Dokkai screenshot 1](images/dokkai1.png)
 ![Dokkai screenshot 2](images/dokkai2.png)
 ![Dokkai screenshot 3](images/dokkai3.png)
